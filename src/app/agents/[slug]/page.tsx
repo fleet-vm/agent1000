@@ -14,6 +14,7 @@ import {
 } from "@/data/agents";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { RequestDemo } from "@/components/agents/RequestDemo";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 
 export function generateStaticParams() {
@@ -118,6 +119,10 @@ export default async function AgentPage({ params }: PageProps<"/agents/[slug]">)
                 {APPROVAL_LABEL[agent.approval]}.
               </p>
             </Section>
+
+            {/* Last, deliberately: the ask comes after the reader knows what
+                they would be agreeing to. */}
+            <RequestDemo agent={agent} />
           </div>
         </div>
       </main>

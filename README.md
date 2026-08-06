@@ -85,7 +85,8 @@ labelled honestly.
 | Placeholder | Where | What is needed |
 |---|---|---|
 | Entity name | `src/components/SiteFooter.tsx`, `src/app/legal/page.tsx` | Both now read **Agent1000**. If the registered company name differs — an `(Pty) Ltd` suffix, or a holding entity that operates the brand — both need to match the CIPC registration **exactly** before launch. |
-| `[CONTACT]` | `src/components/request/RequestBody.tsx` | The address the "Have someone contact me" form posts to. The site is a static export, so this needs an external form endpoint or a `mailto:` fallback — there is no route handler to receive it. |
+| `NEXT_PUBLIC_FORM_ENDPOINT` | `src/lib/demoRequest.ts` | The external form service that forwards to `sales@agent1000.co.za`. **Unset, the "Request a demo" form falls back to opening the visitor's mail client** — which sends from their address and does nothing on a machine with no mail client. Set this before launch. |
+| `[CONTACT]` | `src/components/request/RequestBody.tsx` | The address the "Have someone contact me" form posts to. Still stubbed — it can reuse `postDemoRequest` from `src/lib/demoRequest.ts` once the endpoint above is live. |
 | Domain, favicon | `src/app/layout.tsx`, `src/app/favicon.ico` | Still the create-next-app default favicon. |
 | Name clearance | — | Whether **Agent1000** has been cleared at CIPC and WIPO before it goes on a public site under a wordmark. |
 
