@@ -84,7 +84,7 @@ labelled honestly.
 
 | Placeholder | Where | What is needed |
 |---|---|---|
-| `[ENTITY]` | `src/components/SiteFooter.tsx`, `src/app/legal/page.tsx` | The legal company name, matching the CIPC registration **exactly**. |
+| Entity name | `src/components/SiteFooter.tsx`, `src/app/legal/page.tsx` | Both now read **Agent1000**. If the registered company name differs — an `(Pty) Ltd` suffix, or a holding entity that operates the brand — both need to match the CIPC registration **exactly** before launch. |
 | `[CONTACT]` | `src/components/request/RequestBody.tsx` | The address the "Have someone contact me" form posts to. The site is a static export, so this needs an external form endpoint or a `mailto:` fallback — there is no route handler to receive it. |
 | Domain, favicon | `src/app/layout.tsx`, `src/app/favicon.ico` | Still the create-next-app default favicon. |
 | Name clearance | — | Whether **Agent1000** has been cleared at CIPC and WIPO before it goes on a public site under a wordmark. |

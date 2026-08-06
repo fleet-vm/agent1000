@@ -7,8 +7,9 @@ export const metadata: Metadata = {
 };
 
 /**
- * The only page added for legal reasons, and it stays a stub until [ENTITY] and
- * the operator's actual terms are settled. Do not grow this into an About page.
+ * The only page added for legal reasons, and it stays a stub until the
+ * registration details and the operator's actual terms are settled. Do not grow
+ * this into an About page.
  */
 export default function LegalPage() {
   return (
@@ -18,7 +19,7 @@ export default function LegalPage() {
         <div className="mx-auto w-full max-w-[640px] px-6 py-8">
           <h1 className="text-head text-ink">Legal</h1>
           <p className="mt-3 text-body text-ink">
-            Agent1000 is operated by [ENTITY], registered in South Africa.
+            Agent1000 is registered in South Africa.
           </p>
           <p className="mt-3 text-body text-muted">
             Company registration number, registered address, terms of use and
