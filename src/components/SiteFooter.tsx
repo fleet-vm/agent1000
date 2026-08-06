@@ -16,12 +16,17 @@ export function SiteFooter() {
         >
           Resellers
         </Link>
-        <Link
+        {/* Hidden for now. The page is still built and still reachable at
+            /legal -- only the link is out. Restore this before the site is
+            public: /legal is where the registration number and registered
+            address go, and an ECTA s43 notice has to be findable from the
+            site, not just present on it. */}
+        {/* <Link
           href="/legal"
           className="transition-colors duration-150 hover:text-signal"
         >
           Legal
-        </Link>
+        </Link> */}
       </div>
     </footer>
   );

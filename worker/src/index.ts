@@ -1,7 +1,7 @@
 /**
- * The form endpoint. Two kinds of submission arrive here, told apart by `kind`
- * in the body: a demo request from an agent page, and a reseller application
- * from /resellers.
+ * The form endpoint. Three kinds of submission arrive here, told apart by
+ * `kind` in the body: a demo request from an agent page, a described task from
+ * /request, and a reseller application from /resellers.
  *
  * The site itself is a static export with no server, so this Worker is the only
  * thing between the browser and the inbox. It exists rather than a hosted form
@@ -113,6 +113,40 @@ function buildDemo(body: Record<string, unknown>, env: Env): Mail | string {
   };
 }
 
+/**
+ * A described task from /request. Its own kind rather than a demo request with
+ * a blank agent: the reply depends on whether anything in the catalogue covers
+ * the work, which is a different conversation to booking a demo.
+ */
+function buildTask(body: Record<string, unknown>, env: Env): Mail | string {
+  const name = clean(body.name, 120);
+  const email = clean(body.email, 254);
+  const task = clean(body.task, 4000, false);
+  const matches = clean(body.matches, 200);
+
+  if (!name) return "A name is required";
+  if (!EMAIL.test(email)) return "A valid work email is required";
+
+  const lines = [`Name: ${name}`, `Work email: ${email}`];
+  if (task) lines.push("", "The work:", task);
+  lines.push(
+    "",
+    `Closest agents shown to them: ${matches || "none — the matcher found nothing close"}`,
+  );
+
+  // Newlines are already out of `matches`, but `task` is multi-line by design,
+  // so the subject gets its own flattened, truncated copy.
+  const flat = task.replace(/\s+/g, " ").trim();
+  const summary = flat.length > 60 ? `${flat.slice(0, 60)}…` : flat;
+
+  return {
+    to: env.SALES_TO,
+    subject: summary ? `Task request — ${summary}` : "Task request",
+    replyTo: email,
+    text: lines.join("\n"),
+  };
+}
+
 function buildReseller(body: Record<string, unknown>, env: Env): Mail | string {
   const company = clean(body.company, 200);
   const registrationNumber = clean(body.registrationNumber, 40);
@@ -197,21 +231,21 @@ export default {
     }
 
     const kind = clean(body.kind, 20) || "demo";
-    if (kind !== "demo" && kind !== "reseller") {
+    if (kind !== "demo" && kind !== "task" && kind !== "reseller") {
       return json({ error: "Unknown kind" }, 400, cors);
     }
 
-    // Honeypots: fields no human sees and no human fills in. The two forms use
-    // different names of necessity -- `company` is a real, required field on a
+    // Honeypots: fields no human sees and no human fills in. Each form uses a
+    // different name, of necessity -- `company` is a real, required field on a
     // reseller application -- so the check is per kind. Answer 200 so a bot has
     // nothing to learn and no reason to retry with a different shape.
-    const honeypot = kind === "reseller" ? body.fax : body.company;
-    if (clean(honeypot, 200)) {
+    const HONEYPOT = { demo: "company", task: "address", reseller: "fax" };
+    if (clean(body[HONEYPOT[kind]], 200)) {
       return json({ ok: true }, 200, cors);
     }
 
-    const built =
-      kind === "reseller" ? buildReseller(body, env) : buildDemo(body, env);
+    const build = { demo: buildDemo, task: buildTask, reseller: buildReseller };
+    const built = build[kind](body, env);
     if (typeof built === "string") {
       return json({ error: built }, 422, cors);
     }

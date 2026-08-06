@@ -26,6 +26,7 @@ deployable to any static host.
 | `src/app/globals.css` | The design tokens. Six core colours, six type sizes, one motion sequence. |
 | `src/components/Wordmark.tsx` | The wordmark lockup and the derivation of its numeral lift. |
 | `src/lib/demoRequest.ts` | The demo request payload, and the `mailto:` fallback for when no endpoint is configured. |
+| `src/lib/taskRequest.ts` | The same, for "have someone contact me" on `/request`. |
 | `src/lib/resellerApplication.ts` | The same, for reseller applications. Notes what is deliberately not asked for. |
 | `src/lib/site.ts` | The one place the site knows its own origin. Canonicals, Open Graph, sitemap and robots all read it. |
 | `src/app/sitemap.ts`, `src/app/robots.ts` | Generated from the seed file, so adding an agent adds its URL. |
@@ -102,7 +103,6 @@ labelled honestly.
 | Sending domain | Resend dashboard | `agent1000.co.za` needs SPF and DKIM verified before the Worker can send as `noreply@agent1000.co.za`. Unverified, the mail lands in spam — which for a sales inbox is the same as not sending it. |
 | Reseller vetting process | Not in this repo | `/resellers` collects applications and says plainly that vetting comes before appointment. **Nothing here vets or tracks one** — the Worker stores nothing. Where an application's state lives, and who moves it along, is undecided. See [`worker/README.md`](worker/README.md). |
 | Reseller commercial terms | `src/app/resellers/page.tsx` | The page describes the process and says nothing about margin, tiers, exclusivity or territory, because those are not settled. Add them there once they are — an applicant will ask on the first call regardless. |
-| `[CONTACT]` | `src/components/request/RequestBody.tsx` | The address the "Have someone contact me" form posts to. Still stubbed — it can reuse `postDemoRequest` from `src/lib/demoRequest.ts` once the endpoint above is live. |
 | `NEXT_PUBLIC_SITE_URL` | `.env.local`, read in `src/lib/site.ts` | Defaults to `https://agent1000.co.za` — **confirm that is the live domain.** Canonicals, Open Graph URLs, `sitemap.xml` and `robots.txt` all resolve against it, and a wrong value is silent: canonicals pointing at a domain that is not live tell Google to index nothing. Set it explicitly on any staging deploy. |
 | Favicon | `src/app/favicon.ico` | Still the create-next-app default. |
 | Search Console | — | Submit `/sitemap.xml` to Google Search Console and Bing Webmaster Tools once the domain is live. Nothing in the repo can do this step. |

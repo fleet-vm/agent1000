@@ -1,12 +1,17 @@
 # Form endpoint
 
-A single Cloudflare Worker. It takes the two forms on the site, validates them,
-and forwards each to an inbox. Nothing else.
+A single Cloudflare Worker. It takes the three forms on the site, validates
+them, and forwards each to an inbox. Nothing else.
 
 | `kind` | From | Goes to |
 |---|---|---|
 | `demo` (default) | "Request a demo" on an agent page | `SALES_TO` |
+| `task` | "Have someone contact me" on `/request` | `SALES_TO` |
 | `reseller` | The application on `/resellers` | `PARTNERS_TO`, or `SALES_TO` if unset |
+
+`task` is its own kind rather than a demo request with a blank agent: it carries
+a described task and the agents the matcher put in front of the sender, and "no
+close match" is a different reply to "three agents nearly cover this".
 
 It exists instead of a hosted form service because the payload is personal
 information about named officials at public institutions. Keeping it inside
@@ -73,10 +78,12 @@ setting it — a dev server restart is not enough.
 
 - **Origin allowlist.** A request from an origin not on the list gets 403, and
   the CORS header is never reflected back.
-- **Honeypots.** A field no human sees: `company` on the demo form, `fax` on the
-  reseller form — they differ because `company` is a real, required field on an
-  application. Filled in, the Worker answers `200 {ok:true}` and sends nothing,
-  so a bot learns nothing from the response.
+- **Honeypots.** A field no human sees: `company` on the demo form, `address` on
+  the task form, `fax` on the reseller form. One name per form, so a bot that
+  learns one has not learned the others — and `company` could not be reused
+  anyway, being a real required field on an application. Filled in, the Worker
+  answers `200 {ok:true}` and sends nothing, so a bot learns nothing from the
+  response.
 - **Size and length caps.** 8 KB body, per-field limits, newlines stripped from
   single-line fields.
 - **Plain text mail.** Nothing typed by a visitor is ever interpreted as markup.
