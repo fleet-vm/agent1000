@@ -3,11 +3,25 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { AgentsDirectory } from "@/components/agents/AgentsDirectory";
+import { AgentListJsonLd } from "@/components/JsonLd";
+import { OG_IMAGE } from "@/lib/site";
+
+const DESCRIPTION =
+  "Every Agent1000 agent for South African public institutions — what each one does, how it is reached, and what a person approves. Filter by institution type, from national department to local municipality.";
 
 export const metadata: Metadata = {
-  title: "Agents — Agent1000",
-  description:
-    "Every Agent1000 agent, what it connects to, and what a person approves.",
+  title: "Agents",
+  description: DESCRIPTION,
+  // Filter state lives in the query string, so every combination of facets is
+  // its own URL. The canonical folds them back into one indexable page.
+  alternates: { canonical: "/agents" },
+  openGraph: {
+    type: "website",
+    url: "/agents",
+    title: "Agents — Agent1000",
+    description: DESCRIPTION,
+    images: [OG_IMAGE],
+  },
 };
 
 /**
@@ -18,6 +32,7 @@ export const metadata: Metadata = {
 export default function AgentsPage() {
   return (
     <>
+      <AgentListJsonLd />
       <SiteHeader />
       <main className="flex-1">
         <Suspense

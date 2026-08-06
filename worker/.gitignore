@@ -1,0 +1,4 @@
+# The root .gitignore anchors node_modules to the repo root, so this directory
+# needs its own.
+node_modules/
+.wrangler/

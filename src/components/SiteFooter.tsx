@@ -10,7 +10,16 @@ export function SiteFooter() {
       <div className="mx-auto flex w-full max-w-[1120px] items-center gap-4 px-6 py-3 text-meta text-muted">
         <span>Agent1000</span>
         <span className="tabular">2026</span>
-        <Link href="/legal" className="ml-auto hover:text-signal">
+        <Link
+          href="/resellers"
+          className="ml-auto transition-colors duration-150 hover:text-signal"
+        >
+          Resellers
+        </Link>
+        <Link
+          href="/legal"
+          className="transition-colors duration-150 hover:text-signal"
+        >
           Legal
         </Link>
       </div>

@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
-import { X } from "lucide-react";
+import { useId, useRef, useState } from "react";
 import { INSTITUTION_LABEL, INSTITUTION_VALUES, type Agent } from "@/data/agents";
+import { Modal } from "@/components/ui/Modal";
 import { TextField } from "@/components/ui/TextField";
 import {
   mailtoHref,
@@ -18,13 +18,7 @@ import {
  *
  * The form opens in a modal rather than in place. A form sitting open under
  * every agent reads as lead capture; a button reads as an offer, and opening
- * over the page keeps the agent's detail visible underneath as the reader fills
- * it in.
- *
- * Built on the native <dialog>, which is what gives us the focus trap, the
- * Escape key, the inert background and top-layer stacking without writing any
- * of it. React state stays the source of truth; the effect below just keeps the
- * element in step with it.
+ * over the page keeps the agent's detail visible underneath.
  */
 
 const FIELD =
@@ -34,29 +28,11 @@ type Outcome = "posted" | "mailto";
 
 export function RequestDemo({ agent }: { agent: Agent }) {
   const id = useId();
-  const dialogRef = useRef<HTMLDialogElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
   const [outcome, setOutcome] = useState<Outcome | null>(null);
-
-  useEffect(() => {
-    const dialog = dialogRef.current;
-    if (!dialog) return;
-    // showModal() on an open dialog throws, as does close() on a closed one.
-    if (open && !dialog.open) dialog.showModal();
-    if (!open && dialog.open) dialog.close();
-  }, [open]);
-
-  // showModal() makes the background inert but does not stop it scrolling.
-  useEffect(() => {
-    if (!open) return;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [open]);
 
   function close() {
     setOpen(false);
@@ -81,6 +57,7 @@ export function RequestDemo({ agent }: { agent: Agent }) {
       institutionType: String(data.get("institutionType") ?? ""),
       phone: String(data.get("phone") ?? ""),
       message: String(data.get("message") ?? ""),
+      company: String(data.get("company") ?? ""),
     };
 
     const posted = await postDemoRequest(request);
@@ -151,40 +128,13 @@ export function RequestDemo({ agent }: { agent: Agent }) {
         </>
       )}
 
-      <dialog
-        ref={dialogRef}
-        aria-labelledby={`${id}-title`}
-        onClose={() => setOpen(false)} // Escape, and close() itself
-        onClick={(e) => {
-          // A click that lands on the dialog element rather than on the panel
-          // inside it is a click on the backdrop.
-          if (e.target === dialogRef.current) close();
-        }}
-        className={[
-          "m-auto w-[min(30rem,calc(100vw-2rem))] max-h-[85vh] overflow-y-auto",
-          "rounded-lg border border-rule bg-surface p-0 text-ink",
-          "backdrop:bg-ink/40",
-        ].join(" ")}
+      <Modal
+        open={open}
+        onClose={close}
+        title={outcome ? "Demo requested" : `Request a demo — ${agent.name}`}
       >
-        <div className="flex items-baseline gap-4 border-b border-rule px-5 py-3">
-          <h2
-            id={`${id}-title`}
-            className="text-card font-medium text-ink"
-          >
-            {outcome ? "Demo requested" : `Request a demo — ${agent.name}`}
-          </h2>
-          <button
-            type="button"
-            onClick={close}
-            className="ml-auto -mr-1 shrink-0 self-center text-muted transition-colors duration-150 hover:text-signal"
-          >
-            <X aria-hidden="true" className="size-4" />
-            <span className="sr-only">Close</span>
-          </button>
-        </div>
-
         {outcome ? (
-          <div className="px-5 py-4">
+          <>
             {confirmation}
             <button
               type="button"
@@ -193,9 +143,24 @@ export function RequestDemo({ agent }: { agent: Agent }) {
             >
               Close
             </button>
-          </div>
+          </>
         ) : (
-          <form className="flex flex-col gap-3 px-5 py-4" onSubmit={onSubmit}>
+          <form className="flex flex-col gap-3" onSubmit={onSubmit}>
+            {/* Honeypot. Hidden from sight, from the tab order and from
+                assistive technology, so only a bot filling every field it
+                finds will touch it. The Worker drops anything that arrives
+                with it set. Not `type="hidden"`: bots skip those. */}
+            <div aria-hidden="true" className="hidden">
+              <label htmlFor={`${id}-company`}>Company</label>
+              <input
+                id={`${id}-company`}
+                name="company"
+                type="text"
+                tabIndex={-1}
+                autoComplete="off"
+              />
+            </div>
+
             <div>
               <label htmlFor={`${id}-name`} className="text-ui text-muted">
                 Your name
@@ -314,7 +279,7 @@ export function RequestDemo({ agent }: { agent: Agent }) {
             </p>
           </form>
         )}
-      </dialog>
+      </Modal>
     </section>
   );
 }

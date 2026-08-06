@@ -1,0 +1,26 @@
+name = "agent1000-demo-request"
+main = "src/index.ts"
+compatibility_date = "2026-08-01"
+
+# Public configuration only. RESEND_API_KEY is a secret and must be set with
+# `npx wrangler secret put RESEND_API_KEY` -- never written here, because this
+# file is committed.
+[vars]
+SALES_TO = "sales@agent1000.co.za"
+MAIL_FROM = "Agent1000 <noreply@agent1000.co.za>"
+
+# Reseller applications land here. Unset, they fall back to SALES_TO, so a
+# half-finished setup loses nothing. Point it at a partners mailbox once one
+# exists -- vetting an applicant is not the same job as answering a demo
+# request, and the two should not share a queue for long.
+# PARTNERS_TO = "partners@agent1000.co.za"
+
+# Every origin allowed to post. No wildcard: this list is what stops another
+# site posting through the endpoint in a visitor's name. Add the production
+# domain here once it is settled.
+ALLOWED_ORIGINS = "http://localhost:3000"
+
+# Keep observability on -- `wrangler tail` is the only place a send failure is
+# visible, since nothing is stored.
+[observability]
+enabled = true

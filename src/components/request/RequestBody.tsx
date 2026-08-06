@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { agentMeta } from "@/data/agents";
 import { matchAgents } from "@/lib/match";
+import { Modal } from "@/components/ui/Modal";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TextField } from "@/components/ui/TextField";
 
@@ -13,7 +14,15 @@ export function RequestBody() {
   const task = (searchParams.get("q") ?? "").trim();
 
   const matches = useMemo(() => matchAgents(task, 3), [task]);
+  const [open, setOpen] = useState(false);
   const [sent, setSent] = useState(false);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const doneRef = useRef<HTMLDivElement>(null);
+
+  function close() {
+    setOpen(false);
+    (triggerRef.current ?? doneRef.current)?.focus();
+  }
 
   return (
     <div className="mx-auto w-full max-w-[640px] px-6 py-8">
@@ -80,19 +89,41 @@ export function RequestBody() {
         </h2>
 
         {sent ? (
-          <p className="mt-3 text-body text-ink">
-            Nothing was sent. This form is not connected yet — see the README for
-            the address it will post to.
-          </p>
+          <div ref={doneRef} tabIndex={-1} className="mt-3 focus:outline-none">
+            <p className="text-body text-ink">
+              Nothing was sent. This form is not connected yet — see the README
+              for the address it will post to.
+            </p>
+          </div>
         ) : (
+          <>
+            <button
+              ref={triggerRef}
+              type="button"
+              onClick={() => setOpen(true)}
+              className="mt-3 rounded-sm bg-signal px-3.5 py-2 text-ui text-surface transition-opacity duration-150 hover:opacity-90"
+            >
+              Have someone contact me
+            </button>
+          </>
+        )}
+
+        <Modal
+          open={open}
+          onClose={close}
+          title={sent ? "Not sent" : "Have someone contact me"}
+        >
           <form
-            className="mt-3 flex flex-col gap-3"
+            className="flex flex-col gap-3"
             onSubmit={(e) => {
               e.preventDefault();
-              // TODO: post to [CONTACT] once that address is settled. The site is
-              // a static export, so this needs an external form endpoint or a
-              // mailto fallback -- there is no route handler to receive it.
+              // TODO: this is the one form still not wired to the Worker in
+              // `worker/`. It needs a `kind` of its own there -- the payload is
+              // a described task, not a demo request against a named agent --
+              // and until it has one, submitting must keep saying plainly that
+              // nothing was sent.
               setSent(true);
+              close();
             }}
           >
             <div>
@@ -128,14 +159,23 @@ export function RequestBody() {
               />
             </div>
 
-            <button
-              type="submit"
-              className="self-start rounded-sm bg-signal px-3.5 py-2 text-ui text-surface"
-            >
-              Have someone contact me
-            </button>
+            <div className="mt-1 flex items-center gap-4">
+              <button
+                type="submit"
+                className="rounded-sm bg-signal px-3.5 py-2 text-ui text-surface transition-opacity duration-150 hover:opacity-90"
+              >
+                Have someone contact me
+              </button>
+              <button
+                type="button"
+                onClick={close}
+                className="text-ui text-muted transition-colors duration-150 hover:text-signal"
+              >
+                Cancel
+              </button>
+            </div>
           </form>
-        )}
+        </Modal>
       </section>
     </div>
   );

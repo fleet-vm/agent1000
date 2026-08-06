@@ -3,11 +3,25 @@ import type { Metadata } from "next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { RequestBody } from "@/components/request/RequestBody";
+import { OG_IMAGE } from "@/lib/site";
+
+const DESCRIPTION =
+  "Describe a task in your institution and see which Agent1000 agents come closest to covering it.";
 
 export const metadata: Metadata = {
-  title: "Describe the work — Agent1000",
-  description:
-    "Describe a task and see which Agent1000 agents come closest to covering it.",
+  title: "Describe the work",
+  description: DESCRIPTION,
+  // The page renders from `?q=`, so there is one URL per task anyone has ever
+  // typed. All of them are the same page with different input; the canonical
+  // says so, and robots.txt keeps a crawler from walking the set to find out.
+  alternates: { canonical: "/request" },
+  openGraph: {
+    type: "website",
+    url: "/request",
+    title: "Describe the work — Agent1000",
+    description: DESCRIPTION,
+    images: [OG_IMAGE],
+  },
 };
 
 export default function RequestPage() {

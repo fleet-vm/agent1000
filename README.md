@@ -25,9 +25,22 @@ deployable to any static host.
 | `src/lib/match.ts` | Matches typed text against the catalogue. Keyword + word-boundary only — no model call. |
 | `src/app/globals.css` | The design tokens. Six core colours, six type sizes, one motion sequence. |
 | `src/components/Wordmark.tsx` | The wordmark lockup and the derivation of its numeral lift. |
+| `src/lib/demoRequest.ts` | The demo request payload, and the `mailto:` fallback for when no endpoint is configured. |
+| `src/lib/resellerApplication.ts` | The same, for reseller applications. Notes what is deliberately not asked for. |
+| `src/lib/site.ts` | The one place the site knows its own origin. Canonicals, Open Graph, sitemap and robots all read it. |
+| `src/app/sitemap.ts`, `src/app/robots.ts` | Generated from the seed file, so adding an agent adds its URL. |
+| `src/components/JsonLd.tsx` | Structured data. Every claim restates something visible on the page — no ratings, no prices, no invented counts. |
+| [`worker/`](worker/README.md) | The one piece of backend: a Cloudflare Worker that forwards both forms to an inbox. Deployed separately from the site. |
 
-Routes: `/`, `/agents`, `/agents/[slug]`, `/request`, `/legal`. That is the whole
-site. It is meant to stay that size — no About, no Blog, no Careers, no Pricing.
+Routes: `/`, `/agents`, `/agents/[slug]`, `/request`, `/resellers`, `/legal`.
+That is the whole site. It is meant to stay that size — no About, no Blog, no
+Careers, no Pricing.
+
+The site itself stays a static export. `worker/` is a separate deploy target and
+the only server-side code in the repo; it exists because a static site cannot
+send mail, and because the alternative — a hosted form service — would put
+personal information about named public-sector officials in a third party's
+hands. It stores nothing.
 
 ## Editing the catalogue
 
@@ -85,9 +98,14 @@ labelled honestly.
 | Placeholder | Where | What is needed |
 |---|---|---|
 | Entity name | `src/components/SiteFooter.tsx`, `src/app/legal/page.tsx` | Both now read **Agent1000**. If the registered company name differs — an `(Pty) Ltd` suffix, or a holding entity that operates the brand — both need to match the CIPC registration **exactly** before launch. |
-| `NEXT_PUBLIC_FORM_ENDPOINT` | `src/lib/demoRequest.ts` | The external form service that forwards to `sales@agent1000.co.za`. **Unset, the "Request a demo" form falls back to opening the visitor's mail client** — which sends from their address and does nothing on a machine with no mail client. Set this before launch. |
+| `NEXT_PUBLIC_FORM_ENDPOINT` | `.env.local`, read in `src/lib/demoRequest.ts` | The deployed URL of the Worker in [`worker/`](worker/README.md), which forwards to `sales@agent1000.co.za`. **Unset, the "Request a demo" form falls back to opening the visitor's mail client** — which sends from their address and does nothing on a machine with no mail client. Deploy the Worker and set this before launch. |
+| Sending domain | Resend dashboard | `agent1000.co.za` needs SPF and DKIM verified before the Worker can send as `noreply@agent1000.co.za`. Unverified, the mail lands in spam — which for a sales inbox is the same as not sending it. |
+| Reseller vetting process | Not in this repo | `/resellers` collects applications and says plainly that vetting comes before appointment. **Nothing here vets or tracks one** — the Worker stores nothing. Where an application's state lives, and who moves it along, is undecided. See [`worker/README.md`](worker/README.md). |
+| Reseller commercial terms | `src/app/resellers/page.tsx` | The page describes the process and says nothing about margin, tiers, exclusivity or territory, because those are not settled. Add them there once they are — an applicant will ask on the first call regardless. |
 | `[CONTACT]` | `src/components/request/RequestBody.tsx` | The address the "Have someone contact me" form posts to. Still stubbed — it can reuse `postDemoRequest` from `src/lib/demoRequest.ts` once the endpoint above is live. |
-| Domain, favicon | `src/app/layout.tsx`, `src/app/favicon.ico` | Still the create-next-app default favicon. |
+| `NEXT_PUBLIC_SITE_URL` | `.env.local`, read in `src/lib/site.ts` | Defaults to `https://agent1000.co.za` — **confirm that is the live domain.** Canonicals, Open Graph URLs, `sitemap.xml` and `robots.txt` all resolve against it, and a wrong value is silent: canonicals pointing at a domain that is not live tell Google to index nothing. Set it explicitly on any staging deploy. |
+| Favicon | `src/app/favicon.ico` | Still the create-next-app default. |
+| Search Console | — | Submit `/sitemap.xml` to Google Search Console and Bing Webmaster Tools once the domain is live. Nothing in the repo can do this step. |
 | Name clearance | — | Whether **Agent1000** has been cleared at CIPC and WIPO before it goes on a public site under a wordmark. |
 
 `/legal` is a stub. It exists only so the footer has somewhere to point, and it

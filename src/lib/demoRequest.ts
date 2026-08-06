@@ -5,10 +5,10 @@
  *
  * Two paths, in order of preference:
  *
- *  1. `NEXT_PUBLIC_FORM_ENDPOINT` is set to an external form service that
- *     forwards to SALES_EMAIL. The request posts in the background and the
- *     visitor never leaves the page. This is what should be configured before
- *     launch -- see the README.
+ *  1. `NEXT_PUBLIC_FORM_ENDPOINT` is set to the demo request Worker in
+ *     `worker/`, which forwards to SALES_EMAIL. The request posts in the
+ *     background and the visitor never leaves the page. This is what should be
+ *     configured before launch -- see `worker/README.md`.
  *  2. Nothing is configured, or the post fails. The request falls back to a
  *     prefilled `mailto:`, which opens the visitor's own mail client. It works
  *     with no infrastructure at all, but it sends from their address, not
@@ -35,6 +35,11 @@ export type DemoRequest = {
   institutionType: string; // the label, not the slug -- this is read by a person
   phone: string;
   message: string;
+  /**
+   * Honeypot. Rendered hidden and never filled in by a person, so anything in
+   * it means a bot. The Worker drops those silently -- see `worker/src/index.ts`.
+   */
+  company: string;
 };
 
 export function demoSubject(r: DemoRequest): string {
@@ -79,14 +84,13 @@ export async function postDemoRequest(r: DemoRequest): Promise<boolean> {
     const res = await fetch(FORM_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
+      // The field names the Worker validates. The destination address is not
+      // sent: it lives in the Worker's config, so a forged post cannot redirect
+      // a submission somewhere else.
       body: JSON.stringify({
-        // `_replyto` and `_subject` are the convention Formspree, Web3Forms and
-        // FormSubmit all understand, so the endpoint can be swapped without
-        // touching this file. The full set is sent flat as well, for services
-        // that just dump every field into the mail body.
-        _replyto: r.email,
-        _subject: demoSubject(r),
-        to: SALES_EMAIL,
+        // The Worker handles more than one kind of submission; this is what
+        // tells the two apart.
+        kind: "demo",
         agent: r.agentName,
         agentSlug: r.agentSlug,
         name: r.name,
@@ -95,6 +99,7 @@ export async function postDemoRequest(r: DemoRequest): Promise<boolean> {
         institution: r.institution,
         institutionType: r.institutionType,
         message: r.message,
+        company: r.company,
       }),
     });
     return res.ok;

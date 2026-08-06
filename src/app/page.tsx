@@ -2,6 +2,7 @@ import { Wordmark } from "@/components/Wordmark";
 import { TaskInput } from "@/components/TaskInput";
 import { AgentTiles } from "@/components/AgentTiles";
 import { SiteFooter } from "@/components/SiteFooter";
+import { OrganizationJsonLd } from "@/components/JsonLd";
 
 /**
  * The hero, and the whole of `/`.
@@ -13,6 +14,8 @@ import { SiteFooter } from "@/components/SiteFooter";
 export default function Home() {
   return (
     <>
+      <OrganizationJsonLd />
+
       <main className="flex flex-1 items-center justify-center px-6 py-16">
         <div className="w-full max-w-[640px] text-center sm:text-left">
           <Wordmark

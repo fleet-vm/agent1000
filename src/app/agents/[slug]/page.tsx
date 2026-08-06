@@ -15,7 +15,9 @@ import {
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { RequestDemo } from "@/components/agents/RequestDemo";
+import { AgentJsonLd } from "@/components/JsonLd";
 import { StatusBadge } from "@/components/ui/StatusBadge";
+import { OG_IMAGE } from "@/lib/site";
 
 export function generateStaticParams() {
   return agents.map((agent) => ({ slug: agent.slug }));
@@ -26,10 +28,26 @@ export async function generateMetadata({
 }: PageProps<"/agents/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const agent = getAgent(slug);
-  if (!agent) return { title: "Agent not found — Agent1000" };
+  if (!agent) return { title: "Agent not found" };
+
+  const path = `/agents/${agent.slug}`;
+  // The summary is already one plain-language line and already correctly
+  // tensed -- an agent still in development is written in the future tense, so
+  // a search result can never claim it is running when the badge says it is
+  // not. Reusing it keeps the description and the page in step by construction.
+  const description = `${agent.summary} ${CATEGORY_LABEL[agent.category]} · ${CADENCE_LABEL[agent.cadence]}.`;
+
   return {
-    title: `${agent.name} — Agent1000`,
-    description: agent.summary,
+    title: agent.name,
+    description,
+    alternates: { canonical: path },
+    openGraph: {
+      type: "website",
+      url: path,
+      title: `${agent.name} — Agent1000`,
+      description,
+      images: [OG_IMAGE],
+    },
   };
 }
 
@@ -57,6 +75,7 @@ export default async function AgentPage({ params }: PageProps<"/agents/[slug]">)
 
   return (
     <>
+      <AgentJsonLd agent={agent} />
       <SiteHeader />
 
       <main className="flex-1">

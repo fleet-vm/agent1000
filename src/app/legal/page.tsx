@@ -3,7 +3,9 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
 export const metadata: Metadata = {
-  title: "Legal — Agent1000",
+  title: "Legal",
+  description: "Company details for Agent1000, registered in South Africa.",
+  alternates: { canonical: "/legal" },
 };
 
 /**
