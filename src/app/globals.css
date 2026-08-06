@@ -1,26 +1,144 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* ---------------------------------------------------------------------------
+   Agent1000 design tokens.
+
+   Six core values. The site has no brand accent colour: colour is functional
+   only. --signal marks what you can act on; the status tokens mark what state
+   an agent is in. Nothing else on this site is coloured.
+
+   Light only, by choice. Everything is a custom property, so a dark palette is
+   a second block and a re-check of the status contrasts, not a retrofit.
+--------------------------------------------------------------------------- */
+
+@theme {
+  --color-ink: #14181c; /* text, wordmark. cool near-black, never #000 */
+  --color-paper: #fcfcfb; /* page */
+  --color-surface: #ffffff; /* cards, sidebar, input */
+  --color-rule: #dcddd9; /* the one hairline */
+  --color-muted: #666c74; /* secondary text, counts       5.2:1 on paper */
+  --color-signal: #0b4f3f; /* focus, links, active state   9.5:1 on white */
+
+  /* Muted, darkened for 11-12px text. Same hue, more weight. */
+  --color-muted-ink: #5a6067; /* 6.2:1 on paper */
+
+  /* Status. One pairing per status, used identically everywhere it appears.
+     `development` gets no fill -- it is the only badge drawn as an outline, so
+     an agent that is not running can never read as though it were. */
+  --color-live-fg: #0b4f3f;
+  --color-live-bg: #e7efea; /* 8.1:1 */
+  --color-pilot-fg: #6b4a05;
+  --color-pilot-bg: #f5eedc; /* 7.0:1 */
+  --color-ready-fg: #5a6067;
+  --color-ready-bg: #f1f1ee; /* 5.6:1 */
+
+  --font-sans: var(--font-plex-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-plex-mono), ui-monospace, monospace;
+
+  /* Type scale. Six sizes; the site uses no others. */
+  --text-micro: 11px; /* facet group labels, badges */
+  --text-meta: 12px; /* metadata lines, counts, chips */
+  --text-ui: 13px; /* controls, facet labels, nav */
+  --text-card: 14px; /* card titles */
+  --text-body: 16px; /* prose, the vision line, the task input */
+  --text-head: 20px; /* page headings */
+
+  --radius-sm: 4px; /* chips, badges, inputs */
+  --radius-lg: 10px; /* panels, cards, tiles */
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+/* --------------------------------------------------------------------- base */
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-ui);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* One focus treatment, on everything, always visible. */
+  :focus-visible {
+    outline: 2px solid var(--color-signal);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
+  ::placeholder {
+    color: var(--color-muted);
+    opacity: 1;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  /* Counts and numerals never reflow as filters change. */
+  .tabular {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+  }
+
+  /* ------------------------------------------------------------------ motion
+
+     One orchestrated sequence, on `/` only, ~320ms total. After it, nothing on
+     this site moves again except focus and hover.                           */
+
+  @keyframes a1k-rule-draw {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  @keyframes a1k-rise {
+    from {
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .anim-rule {
+    transform-origin: left center;
+    animation: a1k-rule-draw 260ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .anim-rise {
+    animation: a1k-rise 260ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  .delay-1 {
+    animation-delay: 40ms;
+  }
+  .delay-2 {
+    animation-delay: 80ms;
+  }
+  .delay-3 {
+    animation-delay: 120ms;
+  }
+  .delay-4 {
+    animation-delay: 160ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
