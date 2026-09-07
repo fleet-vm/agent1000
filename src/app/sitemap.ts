@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { agents } from "@/data/agents";
+import { PARTNERS_ARE_PLACEHOLDER } from "@/data/partners";
 import { url } from "@/lib/site";
 
 /**
@@ -52,6 +53,19 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.7,
     },
+    // The register is only advertised once it holds real appointments. While
+    // it is placeholder the page is served `noindex`, and a sitemap entry for
+    // a noindex URL is a contradiction a crawler is entitled to distrust.
+    ...(PARTNERS_ARE_PLACEHOLDER
+      ? []
+      : [
+          {
+            url: url("/partners"),
+            lastModified,
+            changeFrequency: "monthly" as const,
+            priority: 0.7,
+          },
+        ]),
     {
       url: url("/request"),
       lastModified,
