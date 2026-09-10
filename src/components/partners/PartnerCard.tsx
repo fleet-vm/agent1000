@@ -99,10 +99,14 @@ export function PartnerCard({ partner }: { partner: Partner }) {
           {partner.contactName && (
             <span className="block text-ink">{partner.contactName}</span>
           )}
-          <a href={partner.website} rel="noopener nofollow" className={LINK}>
-            {partner.website.replace(/^https?:\/\//, "")}
-          </a>
-          <span className="text-muted"> · </span>
+          {partner.website && (
+            <>
+              <a href={partner.website} rel="noopener nofollow" className={LINK}>
+                {partner.website.replace(/^https?:\/\//, "")}
+              </a>
+              <span className="text-muted"> · </span>
+            </>
+          )}
           <a href={`mailto:${partner.email}`} className={LINK}>
             {partner.email}
           </a>

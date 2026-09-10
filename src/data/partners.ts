@@ -85,7 +85,8 @@ export type Partner = {
   agents: string[];
   /** One line, plain language: the work they do. Never who they do it for. */
   focus?: string;
-  website: string;
+  /** Optional: a company that has not given us one is recorded without it. */
+  website?: string;
   email: string;
   /** The named person at the partner. Optional: some partners give a desk. */
   contactName?: string;
@@ -127,20 +128,39 @@ export const partners: Partner[] = [
     contactName: "Malesela Molepo",
     phone: "0817826517",
   },
+  /**
+   * Supplied 10 September 2026. Appointed as an integrator; the rest of the
+   * entry is missing for the same reason as the one above -- coverage, agents,
+   * focus and the certificate are ours to issue or theirs to confirm, not ours
+   * to invent. No website was given.
+   *
+   * Registered address: 375 Aventurine Street, Zambezi Manor Lifestyle Estate,
+   * Derdepoort.
+   */
   {
-    slug: "aloe-ridge-technologies",
-    name: "Aloe Ridge Technologies",
+    slug: "mokaba-freight-solutions",
+    name: "Mokaba Freight Solutions",
     roles: ["integrator"],
+    town: "Derdepoort",
+    agents: [],
+    email: "info.mokabafreight@gmail.com",
+    contactName: "Itumeleng Mokaba",
+    phone: "0815839649",
+  },
+  {
+    slug: "Africanetwork",
+    name: "Africanetwork ",
+    roles: ["reseller", "integrator"],
     certificate: "A1K-2025-0104",
     certifiedSince: "2025-04",
     certifiedUntil: "2027-04",
-    coverage: "Western Cape",
-    town: "Cape Town",
-    agents: ["vulnwatch", "sitewatch"],
+    coverage: "Gauteng",
+    town: "Guateng",
+    agents: ["vulnwatch", "sitewatch","contentdesk"],
     focus:
       "Application security and hosting work for institutions that build their own software.",
-    website: "https://aloeridge.example.com",
-    email: "partners@aloeridge.example.com",
+    website: "https://africanetwork.co.za",
+    email: "Katlego@africanetwork.co.za",
   },
   {
     slug: "highveld-public-systems",
@@ -158,50 +178,50 @@ export const partners: Partner[] = [
     email: "hello@highveldsystems.example.com",
   },
   {
-    slug: "kopano-systems-group",
-    name: "Kopano Systems Group",
+    slug: "Office-Supply",
+    name: "Office Supply",
     roles: ["reseller"],
     certificate: "A1K-2025-0107",
     certifiedSince: "2025-06",
     certifiedUntil: "2027-06",
-    coverage: "Free State",
-    town: "Bloemfontein",
-    agents: ["contentdesk", "reportpack"],
+    coverage: "Gauteng",
+    town: "Johannesburg",
+    agents: ["contentdesk","VulnWatch", "DocAgent"],
     focus:
       "Reporting and records work for local municipalities and municipal entities.",
-    website: "https://kopanosystems.example.com",
-    email: "info@kopanosystems.example.com",
+    website: "https://officesupply.africa",
+    email: "sipho@officesupply.africa",
   },
   {
-    slug: "northfields-data-works",
-    name: "Northfields Data Works",
-    roles: ["integrator"],
+    slug: "back-loggers-offices",
+    name: "Back Bloggers Office",
+    roles: ["reseller"],
     certificate: "A1K-2026-0112",
     certifiedSince: "2026-01",
     certifiedUntil: "2028-01",
-    coverage: "North West",
-    town: "Potchefstroom",
-    agents: ["reportpack"],
+    coverage: "Gauteng",
+    town: "Pretoria",
+    agents: ["ContentDesk", "PMAgent", " VulnWatch"],
     focus:
       "Data extraction and reporting pipelines, mostly in higher education.",
-    website: "https://northfieldsdata.example.com",
-    email: "contact@northfieldsdata.example.com",
+    website: "https://backloggersoffices.co.za",
+    email: "backloggersoffices@gmail.com",
   },
   {
-    slug: "ntsika-digital",
-    name: "Ntsika Digital",
+    slug: "koena-ohs-consultants",
+    name: "Koena OHS Consultants",
     roles: ["reseller", "integrator"],
     certificate: "A1K-2025-0105",
     certifiedSince: "2025-05",
     certifiedUntil: "2027-05",
     coverage: "KwaZulu-Natal",
     town: "Durban",
-    agents: ["contentdesk", "recordsdesk", "sitewatch"],
+    agents: ["contentdesk","vulnwatch", "recordsdesk", "sitewatch"],
     focus:
       "Website and records systems for metros and the entities they own.",
     website: "https://ntsikadigital.example.com",
     email: "partners@ntsikadigital.example.com",
-  },
+  },    
   {
     slug: "sandstone-integration",
     name: "Sandstone Integration",
