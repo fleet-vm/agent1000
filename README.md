@@ -28,12 +28,14 @@ deployable to any static host.
 | `src/lib/demoRequest.ts` | The demo request payload, and the `mailto:` fallback for when no endpoint is configured. |
 | `src/lib/taskRequest.ts` | The same, for "have someone contact me" on `/request`. |
 | `src/lib/resellerApplication.ts` | The same, for reseller applications. Notes what is deliberately not asked for. |
+| `src/data/partners.ts` | The register of appointed partners behind `/partners`, and the `PARTNERS_ARE_PLACEHOLDER` flag that keeps it out of the index until it holds real ones. |
 | `src/lib/site.ts` | The one place the site knows its own origin. Canonicals, Open Graph, sitemap and robots all read it. |
 | `src/app/sitemap.ts`, `src/app/robots.ts` | Generated from the seed file, so adding an agent adds its URL. |
 | `src/components/JsonLd.tsx` | Structured data. Every claim restates something visible on the page — no ratings, no prices, no invented counts. |
 | [`worker/`](worker/README.md) | The one piece of backend: a Cloudflare Worker that forwards both forms to an inbox. Deployed separately from the site. |
 
-Routes: `/`, `/agents`, `/agents/[slug]`, `/request`, `/resellers`, `/legal`.
+Routes: `/`, `/agents`, `/agents/[slug]`, `/request`, `/resellers`, `/partners`,
+`/legal`.
 That is the whole site. It is meant to stay that size — no About, no Blog, no
 Careers, no Pricing.
 
@@ -102,6 +104,7 @@ labelled honestly.
 | `NEXT_PUBLIC_FORM_ENDPOINT` | `.env.local`, read in `src/lib/demoRequest.ts` | The deployed URL of the Worker in [`worker/`](worker/README.md), which forwards to `sales@agent1000.co.za`. **Unset, the "Request a demo" form falls back to opening the visitor's mail client** — which sends from their address and does nothing on a machine with no mail client. Deploy the Worker and set this before launch. |
 | Sending domain | Resend dashboard | `agent1000.co.za` needs SPF and DKIM verified before the Worker can send as `noreply@agent1000.co.za`. Unverified, the mail lands in spam — which for a sales inbox is the same as not sending it. |
 | Reseller vetting process | Not in this repo | `/resellers` collects applications and says plainly that vetting comes before appointment. **Nothing here vets or tracks one** — the Worker stores nothing. Where an application's state lives, and who moves it along, is undecided. See [`worker/README.md`](worker/README.md). |
+| Certified partner register | `src/data/partners.ts` | **Every entry is invented.** The page carries a visible notice, is served `noindex` and is left out of `sitemap.xml` while `PARTNERS_ARE_PLACEHOLDER` is `true`. Replace the array with the companies that have actually signed, then flip the flag in the same commit. Nobody goes on the register who has not signed an agreement — the whole value of the page is that being on it means something. |
 | Reseller commercial terms | `src/app/resellers/page.tsx` | The page describes the process and says nothing about margin, tiers, exclusivity or territory, because those are not settled. Add them there once they are — an applicant will ask on the first call regardless. |
 | `NEXT_PUBLIC_SITE_URL` | `.env.local`, read in `src/lib/site.ts` | Defaults to `https://agent1000.co.za` — **confirm that is the live domain.** Canonicals, Open Graph URLs, `sitemap.xml` and `robots.txt` all resolve against it, and a wrong value is silent: canonicals pointing at a domain that is not live tell Google to index nothing. Set it explicitly on any staging deploy. |
 | Favicon | `src/app/favicon.ico` | Still the create-next-app default. |

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { ResellerForm } from "@/components/resellers/ResellerForm";
@@ -114,6 +115,22 @@ export default function ResellersPage() {
                   </li>
                 ))}
               </ol>
+            </Section>
+
+            <Section heading="Once you are appointed">
+              <p className="text-body text-ink">
+                Appointed companies are listed on the{" "}
+                <Link
+                  href="/partners"
+                  className="underline decoration-rule underline-offset-2 transition-colors duration-150 hover:text-signal hover:decoration-signal"
+                >
+                  public register
+                </Link>
+                , with the agents they carry and a certificate number an
+                institution can quote back to us. Being on it is the only proof
+                of appointment there is, and an institution that checks will
+                check there.
+              </p>
             </Section>
 
             <Section heading="What we will not ask you for here">
