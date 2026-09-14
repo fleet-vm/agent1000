@@ -85,8 +85,10 @@
 
   /* ------------------------------------------------------------------ motion
 
-     One orchestrated sequence, on `/` only, ~320ms total. After it, nothing on
-     this site moves again except focus and hover.                           */
+     One orchestrated sequence, on `/` only, ~320ms total. After it the only
+     thing on this site that moves is the recorded threads in `See agents at
+     work`, which play a turn at a time as you reach them, plus focus and
+     hover. All of it stops under `prefers-reduced-motion`.                  */
 
   @keyframes a1k-rule-draw {
     from {
@@ -115,6 +117,39 @@
 
   .anim-rise {
     animation: a1k-rise 260ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  /* A thread turn arriving. Same curve and distance as `.anim-rise`, shorter,
+     because it fires per turn rather than once per page. */
+  @keyframes a1k-step {
+    from {
+      opacity: 0;
+      transform: translateY(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .anim-step {
+    animation: a1k-step 220ms cubic-bezier(0.22, 0.61, 0.36, 1) both;
+  }
+
+  /* The one looping animation on the site: `Working...` while an agent is
+     mid-step. It stops the moment the turn lands. */
+  @keyframes a1k-dot {
+    0%,
+    100% {
+      opacity: 0.3;
+    }
+    50% {
+      opacity: 1;
+    }
+  }
+
+  .anim-dot {
+    animation: a1k-dot 1.4s ease-in-out infinite;
   }
 
   .delay-1 {

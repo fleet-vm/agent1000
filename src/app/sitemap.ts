@@ -38,6 +38,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "weekly",
       priority: 0.9,
     },
+    {
+      url: url("/use-cases"),
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
     ...agents.map((agent) => ({
       url: url(`/agents/${agent.slug}`),
       lastModified,

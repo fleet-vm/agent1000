@@ -11,8 +11,14 @@ export function SiteFooter() {
         <span>Agent1000</span>
         <span className="tabular">2026</span>
         <Link
-          href="/partners"
+          href="/use-cases"
           className="ml-auto transition-colors duration-150 hover:text-signal"
+        >
+          Use cases
+        </Link>
+        <Link
+          href="/partners"
+          className="transition-colors duration-150 hover:text-signal"
         >
           Certified partners
         </Link>
