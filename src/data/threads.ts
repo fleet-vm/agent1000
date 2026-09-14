@@ -59,6 +59,10 @@ export type Thread = {
       the thing being sold -- not the automation. */
   value: string;
   title: string;
+  /** The beat that follows the thread: what the reader just watched, and why
+      it is worth anything. Without these the page is four transcripts in a
+      column, and a reader skims the first and scrolls past the rest. */
+  takeaway: { title: string; body: string };
   /** Set where the thread belongs to an agent in the catalogue, so the demo
       can link to the page that says what that agent actually is. */
   slug?: string;
@@ -76,6 +80,11 @@ export const officeThreads: Thread[] = [
     value:
       "Check the balance, apply the leave policy, and hand the supervisor one decision to make.",
     title: "Process a leave request",
+    takeaway: {
+      title: "It works the system, not a spreadsheet about the system",
+      body:
+        "The agent signed in to Persal, read the real balance and wrote the real record. Nothing was re-keyed into a side file and nothing was exported to be imported later — which is where most automation in an institution quietly goes wrong.",
+    },
     steps: [
       { type: "user", text: "Process the leave request from employee 4471 — 5 days annual leave, 22–26 September.", time: "9:02 AM" },
       { type: "agent", text: "I'll check the balance on Persal, validate it against leave policy, and route it to the supervisor before anything is recorded." },
@@ -98,6 +107,11 @@ export const officeThreads: Thread[] = [
     value:
       "Your calendar, your unread mail and your open tasks, in one brief, before seven.",
     title: "The morning brief",
+    takeaway: {
+      title: "Three systems, one answer",
+      body:
+        "A calendar, a mailbox and a task list are three places to look before seven in the morning. This is one place, and the second request turned it into something nobody has to ask for again.",
+    },
     steps: [
       { type: "user", text: "Give me my morning brief.", time: "7:00 AM" },
       { type: "connect", system: "Outlook · Calendar" },
@@ -125,6 +139,11 @@ export const officeThreads: Thread[] = [
     value:
       "A reply written in your voice, waiting in your drafts. Nothing sends without you.",
     title: "Draft a reply for sign-off",
+    takeaway: {
+      title: "Your voice, your outbox, your name",
+      body:
+        "The agent writes; you send. An institution's correspondence is a record that can be produced in an enquiry years later, so the last click stays with the person whose name is at the bottom of it.",
+    },
     steps: [
       { type: "user", text: "Draft a reply to the Treasury email about the quarterly submission.", time: "7:05 AM" },
       { type: "agent", text: "I've read the thread. I'll draft a reply confirming the submission and the date — it saves as a draft, and nothing is sent." },
@@ -143,6 +162,11 @@ export const officeThreads: Thread[] = [
     value:
       "What is overdue, what is blocked, and the chase-ups already drafted for approval.",
     title: "Where the project stands",
+    takeaway: {
+      title: "Once is a favour. Every Monday is a colleague.",
+      body:
+        "Every thread here ends with the same move — say it again, and the one-off becomes standing work at a fixed hour. That is the difference between a tool you remember to use and work that simply gets done.",
+    },
     steps: [
       { type: "user", text: "Where are we on the departmental website project?", time: "8:10 AM" },
       { type: "connect", system: "ClickUp · SharePoint" },
@@ -179,6 +203,11 @@ export const catalogueThreads: Thread[] = [
     value:
       "Know what needs patching before anyone else finds it. The patch waits for an administrator.",
     title: "Patch the citizen portal",
+    takeaway: {
+      title: "Finding is safe. Fixing is not.",
+      body:
+        "Scanning and reporting run on standing approval, because they change nothing. The patch is a change, so it stops and waits for an administrator. Same agent, two different permissions — which is what makes standing approval safe to give.",
+    },
     steps: [
       { type: "user", text: "What needs patching on the citizen portal this week?", time: "8:00 AM" },
       { type: "agent", text: "Checking the portal's dependencies against the advisory registries. I only report — nothing gets changed without an administrator approving it." },
@@ -202,6 +231,11 @@ export const catalogueThreads: Thread[] = [
     value:
       "An emailed statement becomes a staged page. It goes live when the officer says so.",
     title: "Publish a media statement",
+    takeaway: {
+      title: "Nothing is published by a machine",
+      body:
+        "The page existed, finished, before anyone approved it. That is deliberate: the officer reviews the real thing rather than a description of it, and their approval is the act that puts it online.",
+    },
     steps: [
       { type: "user", text: "Publish the media statement on the new bursary round.", time: "10:12 AM" },
       { type: "agent", text: "I have the statement and the attachment from your email. I'll build the page against the media-release template and hold it as a preview — nothing goes live until you approve it." },
@@ -221,6 +255,11 @@ export const catalogueThreads: Thread[] = [
     value:
       "Every letter filed against the right case — and the ambiguous one held back for the clerk.",
     title: "File this morning's registry mail",
+    takeaway: {
+      title: "It says when it does not know",
+      body:
+        "An agent that guesses on the ambiguous one is worse than no agent, because you can no longer tell which filings to trust. This one files what is certain and hands over what is not, which is the only version a registry can actually use.",
+    },
     steps: [
       { type: "user", text: "File what came into the registry mailbox this morning.", time: "7:40 AM" },
       { type: "agent", text: "Reading the mailbox now. I'll match each item to a case record and show you the match before anything is filed against it." },
@@ -241,6 +280,11 @@ export const catalogueThreads: Thread[] = [
     value:
       "The same pack from the same sources every month. Assembled, flagged, never submitted.",
     title: "Assemble the monthly pack",
+    takeaway: {
+      title: "The same way, every month",
+      body:
+        "The value here is not speed. It is that the pack is assembled identically each month from identical sources — so when a number moves, the number moved, and not the method.",
+    },
     steps: [
       { type: "user", text: "Start the monthly reporting pack for September.", time: "6:02 AM" },
       { type: "agent", text: "Pulling the same sources into the same template as last month. I assemble it — I never submit it." },
@@ -263,6 +307,11 @@ export const catalogueThreads: Thread[] = [
     value:
       "A certificate expiring, or a page changed overnight. You hear it at 05:00, not from the public.",
     title: "Check the public sites",
+    takeaway: {
+      title: "You hear it first",
+      body:
+        "A lapsed certificate or an altered contact number is found either at five in the morning by an agent, or at nine by a member of the public. Both are notifications. Only one of them is a good morning.",
+    },
     steps: [
       { type: "user", text: "Anything wrong with our public sites this morning?", time: "5:30 AM" },
       { type: "agent", text: "Checking each one — whether it answers, what its certificate says, and whether any page changed overnight." },

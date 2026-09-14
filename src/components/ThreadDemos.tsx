@@ -59,6 +59,123 @@ const ICONS: Record<ThreadIcon, LucideIcon> = {
   data: BarChart3,
 };
 
+/* ------------------------------------------------------------------ pacing
+
+   One thread plays at a time, and it is the one the reader is looking at.
+
+   Each card watching only itself is what made every demo start talking at once
+   the moment the section scrolled into view: four conversations racing each
+   other, none of them where the reader's eye was, and all of them over by the
+   time anyone arrived. So the cards are pooled here, at module scope rather
+   than per list -- the front page breaks its demos into two lists around a
+   band of copy, and two lists each electing their own winner is the same bug
+   again.
+
+   The measure is distance from a reading line a third of the way down the
+   viewport, not how many pixels of a card are on screen. Pixels sound
+   reasonable and are not: a thread that has not started is only its header,
+   so it can never out-measure a thread that has already grown to a full
+   transcript -- including the one directly above it that just finished. Every
+   card stays collapsed, waiting for a turn that arithmetic will not give it.
+   Distance does not care how tall a card is.
+
+   A thread that loses focus does not reset. It holds on its last turn and
+   carries on when the reader comes back to it. A thread that has finished
+   stands down, so the baton can pass while it is still on screen. */
+
+const cards = new Map<string, HTMLElement>();
+const finished = new Set<string>();
+const subscribers = new Set<() => void>();
+let activeId: string | null = null;
+let pendingElection = 0;
+let listening = false;
+
+/** Where in the viewport a reader is assumed to be looking. */
+const READING_LINE = 0.35;
+
+function distanceFromReadingLine(card: HTMLElement) {
+  const rect = card.getBoundingClientRect();
+  const viewport = window.innerHeight;
+
+  if (rect.bottom <= 0 || rect.top >= viewport) return Infinity;
+
+  const line = viewport * READING_LINE;
+  if (rect.top > line) return rect.top - line;
+  if (rect.bottom < line) return line - rect.bottom;
+  return 0; // the card straddles the line: this is what is being read
+}
+
+function runElection() {
+  pendingElection = 0;
+
+  let winner: string | null = null;
+  let shortest = Infinity;
+
+  for (const [id, card] of cards) {
+    if (finished.has(id)) continue;
+    const distance = distanceFromReadingLine(card);
+    // Strictly nearer, so a tie leaves the baton where it is.
+    if (distance < shortest) {
+      winner = id;
+      shortest = distance;
+    }
+  }
+
+  if (winner === activeId) return;
+  activeId = winner;
+  for (const notify of subscribers) notify();
+}
+
+/**
+ * Elections are held once a frame and never inside the handler that called
+ * for one. Publishing straight from a scroll or layout callback puts a state
+ * change into React's commit-layout-commit path, and cards close in height
+ * then trade the lead every frame -- each trade re-rendering every card, which
+ * changes layout, which trades the lead again. A frame's delay ends it.
+ */
+function elect() {
+  if (pendingElection) return;
+  pendingElection = requestAnimationFrame(runElection);
+}
+
+function register(id: string, card: HTMLElement) {
+  cards.set(id, card);
+
+  if (!listening) {
+    listening = true;
+    window.addEventListener("scroll", elect, { passive: true });
+    window.addEventListener("resize", elect);
+  }
+
+  elect();
+}
+
+function unregister(id: string) {
+  cards.delete(id);
+  finished.delete(id);
+
+  if (cards.size === 0 && listening) {
+    listening = false;
+    window.removeEventListener("scroll", elect);
+    window.removeEventListener("resize", elect);
+  }
+
+  elect();
+}
+
+/** Played out. Hand the baton on, even while still on screen. */
+function retire(id: string) {
+  finished.add(id);
+  elect();
+}
+
+function subscribe(notify: () => void) {
+  subscribers.add(notify);
+  return () => {
+    subscribers.delete(notify);
+  };
+}
+
 /** Everything the agent does shares one column and one avatar gutter. */
 type AgentSideStep = Exclude<Step, { type: "user" }>;
 
@@ -203,52 +320,55 @@ function AgentStep({ step }: { step: AgentSideStep }) {
 function DemoThread({ thread, number }: { thread: Thread; number: number }) {
   const Icon = ICONS[thread.icon];
   const [shown, setShown] = useState(0);
-  const [started, setStarted] = useState(false);
-  const cardRef = useRef<HTMLLIElement>(null);
-  const logRef = useRef<HTMLDivElement>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
+  const reducedRef = useRef(false);
   const done = shown >= thread.steps.length;
 
-  /* The thread plays once, when the card is first scrolled to. Anyone who has
-     asked for less motion gets the whole thread at once instead. */
+  const [active, setActive] = useState(false);
+
+  useEffect(() => {
+    reducedRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }, []);
+
+  useEffect(() => subscribe(() => setActive(activeId === thread.id)), [thread.id]);
+
   useEffect(() => {
     const card = cardRef.current;
-    if (!card || started) return;
+    if (!card) return;
 
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (!entry.isIntersecting) return;
-        observer.disconnect();
-        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-          setShown(thread.steps.length);
-        }
-        setStarted(true);
-      },
-      { threshold: 0.2 },
-    );
+    const id = thread.id;
+    register(id, card);
+    return () => unregister(id);
+  }, [thread.id]);
 
-    observer.observe(card);
-    return () => observer.disconnect();
-  }, [started, thread.steps.length]);
-
-  /* A step that reads as work holds the thread longer than one that does not. */
   useEffect(() => {
-    if (!started || done) return;
+    if (done) retire(thread.id);
+  }, [done, thread.id]);
+
+  /* A step that reads as work holds the thread longer than one that does not.
+     Anyone who has asked for less motion gets the whole thread at once. */
+  useEffect(() => {
+    if (!active || done) return;
+
     const next = thread.steps[shown];
-    const hold =
-      next.type === "work" ? 2200 : next.type === "user" ? 1100 : next.type === "card" ? 1800 : 1500;
+    const hold = reducedRef.current
+      ? 0
+      : next.type === "work"
+        ? 2200
+        : next.type === "user"
+          ? 1100
+          : next.type === "card"
+            ? 1800
+            : 1500;
+
     const timer = window.setTimeout(() => setShown((n) => n + 1), hold);
     return () => window.clearTimeout(timer);
-  }, [done, shown, started, thread.steps]);
+  }, [active, done, shown, thread.steps]);
 
-  useEffect(() => {
-    if (shown === 0) return;
-    logRef.current?.scrollTo({ top: logRef.current.scrollHeight, behavior: "smooth" });
-  }, [shown]);
-
-  const pending = started && !done ? thread.steps[shown] : null;
+  const pending = active && !done ? thread.steps[shown] : null;
 
   return (
-    <li ref={cardRef} className="overflow-hidden rounded-lg border border-rule bg-surface">
+    <div ref={cardRef} className="overflow-hidden rounded-lg border border-rule bg-surface">
       <div className="border-b border-rule px-4 py-3.5">
         <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
           <span className="flex size-7 items-center justify-center rounded-lg border border-rule bg-paper">
@@ -278,12 +398,17 @@ function DemoThread({ thread, number }: { thread: Thread; number: number }) {
         <p className="mt-1 text-meta text-muted">{thread.title}</p>
       </div>
 
+      {/* No fixed height and no inner scrollbar. A box that scrolls inside a
+          page that also scrolls steals the wheel from whoever is just reading
+          past it, and it hides the end of the thread -- which is the automation,
+          the part worth seeing. The card grows instead. */}
       <div
-        ref={logRef}
         role="log"
         aria-live="off"
         aria-label={`${thread.name} example thread: ${thread.title}`}
-        className="flex h-[400px] flex-col gap-5 overflow-y-auto px-4 py-4"
+        /* A thread that has not reached the reader yet collapses to nothing,
+           rather than sitting under its header as an empty strip. */
+        className={shown === 0 ? "" : "flex flex-col gap-5 px-4 py-4"}
       >
         {thread.steps.slice(0, shown).map((step, index) => (
           <Turn
@@ -314,7 +439,7 @@ function DemoThread({ thread, number }: { thread: Thread; number: number }) {
           </p>
         )}
       </div>
-    </li>
+    </div>
   );
 }
 
@@ -325,9 +450,26 @@ function DemoThread({ thread, number }: { thread: Thread; number: number }) {
  */
 export function ThreadDemos({ threads, from = 1 }: { threads: Thread[]; from?: number }) {
   return (
-    <ul className="flex flex-col gap-5">
+    <ul className="flex flex-col gap-12">
       {threads.map((thread, index) => (
-        <DemoThread key={thread.id} thread={thread} number={from + index} />
+        <li key={thread.id}>
+          <DemoThread thread={thread} number={from + index} />
+
+          {/* The beat after the thread. Deliberately not a card: the page
+              should alternate between something to watch and something to
+              read, or it is a list again. */}
+          <div className="mt-5 flex gap-3.5">
+            <span aria-hidden="true" className="mt-2.5 h-px w-5 shrink-0 bg-rule" />
+            <div className="min-w-0">
+              <p className="text-card leading-6 font-medium text-ink">
+                {thread.takeaway.title}
+              </p>
+              <p className="mt-1.5 max-w-[56ch] text-meta leading-5 text-muted-ink">
+                {thread.takeaway.body}
+              </p>
+            </div>
+          </div>
+        </li>
       ))}
     </ul>
   );
