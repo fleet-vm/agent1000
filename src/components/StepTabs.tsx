@@ -44,7 +44,7 @@ const TABS: StepTab[] = [
   {
     id: "connect",
     title: "Connect",
-    body: "The agent works inside the systems the institution already runs — the payroll portal, the mailbox, the CMS, the document store.",
+    body: "The agent works inside the systems the institution already runs: the payroll portal, the mailbox, the CMS, the document store.",
     turns: [2, 5],
   },
   {
@@ -156,7 +156,7 @@ export function StepTabs() {
               <li className="px-2 py-1.5">Daily brief · 07:00</li>
               <li className="px-2 py-1.5">Unanswered mail · 11:00, 15:00</li>
               <li className={cn("px-2 py-1.5", active.id === "repeat" && "text-ink")}>
-                {active.id === "repeat" ? "Incoming leave requests · new" : "—"}
+                {active.id === "repeat" ? "Incoming leave requests · new" : ""}
               </li>
             </ul>
           </aside>

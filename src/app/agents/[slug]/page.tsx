@@ -44,7 +44,7 @@ export async function generateMetadata({
     openGraph: {
       type: "website",
       url: path,
-      title: `${agent.name} — Agent1000`,
+      title: `${agent.name} | Agent1000`,
       description,
       images: [OG_IMAGE],
     },

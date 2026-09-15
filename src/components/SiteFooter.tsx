@@ -45,7 +45,7 @@ export function SiteFooter() {
               <Wordmark className="text-[19px] text-ink" />
             </Link>
             <p className="mt-3 max-w-[30ch] text-meta text-muted">
-              A supervised AI workforce for South African public institutions.
+              AI Cloud Platform Workforce for South African public institutions.
             </p>
           </div>
 

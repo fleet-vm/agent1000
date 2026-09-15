@@ -103,7 +103,7 @@ export const INSTITUTION_NOTE: Record<AgentInstitution, string> = {
   "provincial-department": "Provincial equivalents across the nine provinces",
   "national-entity": "PFMA Schedule 3A and 3B",
   "provincial-entity": "PFMA Schedule 3C and 3D",
-  "government-business-enterprise": "PFMA Schedule 2 — the major SOEs",
+  "government-business-enterprise": "PFMA Schedule 2, the major SOEs",
   "constitutional-institution": "Chapter 9 bodies and legislatures",
   metro: "The eight metros",
   "district-municipality": "The 44 districts",

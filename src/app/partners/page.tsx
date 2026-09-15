@@ -30,7 +30,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "/partners",
-    title: "Certified resellers and integrators — Agent1000",
+    title: "Certified resellers and integrators | Agent1000",
     description: DESCRIPTION,
     images: [OG_IMAGE],
   },

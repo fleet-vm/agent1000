@@ -376,7 +376,7 @@ export function ResellerForm() {
             <p className="text-meta text-muted">
               Goes to {SALES_EMAIL}. Used to vet this application and nothing
               else. We never ask for banking details or ID numbers on this form
-              — if something claiming to be us does, it is not us.
+              If something claiming to be us does, it is not us.
             </p>
           </form>
         )}

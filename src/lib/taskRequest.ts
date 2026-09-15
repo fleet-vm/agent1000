@@ -38,7 +38,7 @@ function taskSummary(task: string): string {
 
 export function taskSubject(r: TaskRequest): string {
   const summary = taskSummary(r.task);
-  return summary ? `Task request — ${summary}` : "Task request";
+  return summary ? `Task request: ${summary}` : "Task request";
 }
 
 /** Plain text, because it is read in an inbox and nowhere else. */
@@ -49,7 +49,7 @@ export function taskBody(r: TaskRequest): string {
   }
   lines.push(
     "",
-    `Closest agents shown to them: ${r.matches || "none — the matcher found nothing close"}`,
+    `Closest agents shown to them: ${r.matches || "none, the matcher found nothing close"}`,
   );
   return lines.join("\n");
 }

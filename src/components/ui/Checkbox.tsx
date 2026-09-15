@@ -57,7 +57,7 @@ export function Checkbox({
 
       <span className={cn("flex-1", checked ? "text-ink" : "text-muted")}>
         {label}
-        {hint && <span className="sr-only"> — {hint}</span>}
+        {hint && <span className="sr-only">: {hint}</span>}
       </span>
 
       {count !== undefined && (

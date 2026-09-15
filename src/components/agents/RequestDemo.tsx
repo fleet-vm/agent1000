@@ -131,7 +131,7 @@ export function RequestDemo({ agent }: { agent: Agent }) {
       <Modal
         open={open}
         onClose={close}
-        title={outcome ? "Demo requested" : `Request a demo — ${agent.name}`}
+        title={outcome ? "Demo requested" : `Request a demo: ${agent.name}`}
       >
         {outcome ? (
           <>

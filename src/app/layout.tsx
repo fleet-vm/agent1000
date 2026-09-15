@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     default: SITE_NAME,
     // Child pages set a bare title and get the suffix for free, so no page can
     // ship a title that forgets whose site it is.
-    template: `%s — ${SITE_NAME}`,
+    template: `%s | ${SITE_NAME}`,
   },
   description: SITE_DESCRIPTION,
   applicationName: SITE_NAME,

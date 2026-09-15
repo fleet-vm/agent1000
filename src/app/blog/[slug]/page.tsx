@@ -31,7 +31,7 @@ export async function generateMetadata({
     openGraph: {
       type: "article",
       url: path,
-      title: `${post.title} — Agent1000`,
+      title: `${post.title} | Agent1000`,
       description: post.description,
       publishedTime: post.date,
       authors: [post.author],

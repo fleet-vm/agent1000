@@ -43,7 +43,7 @@ export type DemoRequest = {
 };
 
 export function demoSubject(r: DemoRequest): string {
-  return `Demo request — ${r.agentName}`;
+  return `Demo request: ${r.agentName}`;
 }
 
 /** Plain text, because it is read in an inbox and nowhere else. */

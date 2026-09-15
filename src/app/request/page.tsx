@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "/request",
-    title: "Describe the work — Agent1000",
+    title: "Describe the work | Agent1000",
     description: DESCRIPTION,
     images: [OG_IMAGE],
   },

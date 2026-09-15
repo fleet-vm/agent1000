@@ -92,9 +92,9 @@ export default function Home() {
             </h1>
 
             <p className="anim-rise delay-2 mt-6 max-w-[58ch] text-lede text-muted">
-              A supervised AI workforce for South African public institutions.
-              Agents take the repetitive operational work — leave, correspondence,
-              patching, publishing — and a named official approves every binding
+              AI Cloud Platform Workforce for South African public institutions.
+              Agents take the repetitive operational work: leave, correspondence,
+              patching, publishing. A named official approves every binding
               action.
             </p>
 
@@ -183,7 +183,7 @@ export default function Home() {
             </h2>
             <p className="mt-3 max-w-[52ch] text-lede text-muted">
               Every thread below starts with somebody asking for something in
-              plain English. Watch where each one stops — that pause is a named
+              plain English. Watch where each one stops. That pause is a named
               official, and it is the whole product.
             </p>
 
@@ -207,8 +207,8 @@ export default function Home() {
                 className="font-medium text-signal transition-colors duration-150 hover:underline"
               >
                 Five more, one per agent in the catalogue
-              </Link>{" "}
-              — patching a portal, publishing a statement, filing registry mail,
+              </Link>
+              : patching a portal, publishing a statement, filing registry mail,
               assembling a monthly pack, watching the public sites.
             </p>
           </div>

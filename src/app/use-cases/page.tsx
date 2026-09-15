@@ -8,7 +8,7 @@ import { catalogueThreads } from "@/data/threads";
 import { OG_IMAGE } from "@/lib/site";
 
 const DESCRIPTION =
-  "Worked examples of Agent1000 agents doing real institutional tasks — patching a portal, publishing a statement, filing registry mail, assembling a monthly pack, watching the public sites. Every binding action waits for a named official.";
+  "Worked examples of Agent1000 agents doing real institutional tasks: patching a portal, publishing a statement, filing registry mail, assembling a monthly pack, watching the public sites. Every binding action waits for a named official.";
 
 export const metadata: Metadata = {
   title: "Use cases",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: "/use-cases",
-    title: "Use cases — Agent1000",
+    title: "Use cases | Agent1000",
     description: DESCRIPTION,
     images: [OG_IMAGE],
   },
@@ -44,7 +44,7 @@ export default function UseCasesPage() {
         <div className="mx-auto w-full max-w-[640px]">
           <h1 className="font-display text-head font-semibold tracking-tight text-ink">Use cases</h1>
           <p className="mt-4 text-meta text-muted">
-            Looking for the everyday desks — leave, the morning brief, a reply,
+            Looking for the everyday desks: leave, the morning brief, a reply,
             a project status?{" "}
             <Link
               href="/"
@@ -73,8 +73,8 @@ export default function UseCasesPage() {
               className="text-signal transition-colors duration-150 hover:underline"
             >
               Browse every agent
-            </Link>{" "}
-            — what each one connects to, and who approves what.
+            </Link>
+            : what each one connects to, and who approves what.
           </p>
         </div>
       </main>

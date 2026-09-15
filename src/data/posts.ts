@@ -38,7 +38,7 @@ export const posts: Post[] = [
     slug: "why-every-agent-stops-for-a-person",
     title: "Why every agent stops for a person",
     description:
-      "The approval gate is not a safety feature bolted onto the product. It is the product — and here is how we think about where it sits.",
+      "The approval gate is not a safety feature bolted onto the product. It is the product, and here is how we think about where it sits.",
     date: "2026-09-15",
     author: "Agent1000",
     tag: "Governance",

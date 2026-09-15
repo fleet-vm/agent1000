@@ -17,7 +17,7 @@ import { SITE_NAME } from "@/lib/site";
  */
 
 export const alt =
-  "Agent1000 — a supervised AI workforce for South African public institutions";
+  "Agent1000: AI Cloud Platform Workforce for South African public institutions";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 

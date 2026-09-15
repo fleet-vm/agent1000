@@ -224,13 +224,13 @@ export function statusFacets(f: Filters): FacetOption<AgentStatus>[] {
 }
 
 export const CADENCE_OPTIONS = [
-  { value: "any", label: "Runs — any" },
+  { value: "any", label: "Runs: any" },
   { value: "scheduled", label: CADENCE_LABEL.scheduled },
   { value: "on-request", label: CADENCE_LABEL["on-request"] },
 ] as const;
 
 export const APPROVAL_OPTIONS = [
-  { value: "any", label: "Approval — any" },
+  { value: "any", label: "Approval: any" },
   { value: "per-action", label: APPROVAL_LABEL["per-action"] },
   { value: "standing", label: APPROVAL_LABEL.standing },
 ] as const;
