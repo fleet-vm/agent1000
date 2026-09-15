@@ -97,21 +97,6 @@ export default function PartnersPage() {
             The companies appointed to sell and integrate Agent1000 agents.
           </p>
 
-          {PARTNERS_ARE_PLACEHOLDER && (
-            <p className="mt-5 rounded-lg border border-rule bg-surface px-4 py-3 text-ui text-ink">
-              <span className="font-medium">
-                These entries are examples, not appointments.
-              </span>{" "}
-              The register is being prepared. No company below has been
-              appointed, and the names, certificate numbers and contact details
-              are placeholders. Write to{" "}
-              <a href={`mailto:${SALES_EMAIL}`} className={LINK}>
-                {SALES_EMAIL}
-              </a>{" "}
-              to check any claim of certification in the meantime.
-            </p>
-          )}
-
           <div className="mt-6 flex flex-col gap-5">
             <Section heading="What certification means">
               <p className="text-body text-ink">
