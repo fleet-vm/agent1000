@@ -1,6 +1,6 @@
-# Agent1000 — marketing site and agent directory
+# Agent1000 — marketing site, agent directory and blog
 
-Two public surfaces: a near-empty landing page, and a faceted directory of agents.
+Three public surfaces: a landing page, a faceted directory of agents, and a blog.
 
 Frontend only. No backend, no auth, no database. Every piece of data comes from
 one typed seed file, and every action that would hit a server is stubbed with a
@@ -23,8 +23,12 @@ deployable to any static host.
 | **`src/data/agents.ts`** | **The seed catalogue. Everything on the site comes from here.** |
 | `src/lib/filters.ts` | Filter state, URL parsing, facet counts. No React, no router. |
 | `src/lib/match.ts` | Matches typed text against the catalogue. Keyword + word-boundary only — no model call. |
-| `src/app/globals.css` | The design tokens. Six core colours, six type sizes, one motion sequence. |
+| `src/app/globals.css` | The design tokens. One accent, eight type sizes, two typefaces, one motion sequence. |
 | `src/components/Wordmark.tsx` | The wordmark lockup and the derivation of its numeral lift. |
+| `src/components/SiteNav.tsx` | The tabs. Active tab from the pathname; the small-screen sheet. |
+| `src/components/StepTabs.tsx` | The product frame on `/` and the four tabs under it — Ask, Connect, Approve, Repeat. Replays the leave-request thread from `threads.ts`. |
+| **`src/data/posts.ts`** | **The blog register.** One entry per post; the body is the MDX file with the same slug under `src/content/blog/`. |
+| `src/mdx-components.tsx` | How a post's markdown renders. Every element is styled here, so a post carries no classes of its own. |
 | `src/lib/demoRequest.ts` | The demo request payload, and the `mailto:` fallback for when no endpoint is configured. |
 | `src/lib/taskRequest.ts` | The same, for "have someone contact me" on `/request`. |
 | `src/lib/resellerApplication.ts` | The same, for reseller applications. Notes what is deliberately not asked for. |
@@ -34,10 +38,10 @@ deployable to any static host.
 | `src/components/JsonLd.tsx` | Structured data. Every claim restates something visible on the page — no ratings, no prices, no invented counts. |
 | [`worker/`](worker/README.md) | The one piece of backend: a Cloudflare Worker that forwards both forms to an inbox. Deployed separately from the site. |
 
-Routes: `/`, `/agents`, `/agents/[slug]`, `/request`, `/resellers`, `/partners`,
-`/legal`.
-That is the whole site. It is meant to stay that size — no About, no Blog, no
-Careers, no Pricing.
+Routes: `/`, `/agents`, `/agents/[slug]`, `/use-cases`, `/blog`, `/blog/[slug]`,
+`/request`, `/resellers`, `/partners`, `/legal`.
+That is the whole site. It is meant to stay that size — no About, no Careers,
+no Pricing.
 
 The site itself stays a static export. `worker/` is a separate deploy target and
 the only server-side code in the repo; it exists because a static site cannot
@@ -67,18 +71,52 @@ hard:
 VulnWatch and ContentDesk are real and in production. Everything else is roadmap,
 labelled honestly.
 
+## Writing a blog post
+
+1. Write `src/content/blog/<slug>.mdx`. Plain markdown, GFM tables included.
+   Start headings at `##` — the title in the register becomes the page's h1.
+   Relative links (`/use-cases`) go through `next/link`; absolute ones open as
+   plain anchors.
+2. Add an entry to `src/data/posts.ts` with the same `slug`. The index, the
+   post's route, the front-page teaser and the sitemap all derive from it. A
+   slug that is in the register but has no file is a build error, which is the
+   point.
+3. `npm run build`.
+
+The content rules above apply to posts in full. The one post shipped,
+`why-every-agent-stops-for-a-person`, is a starter — it doubles as a formatting
+reference — and can be replaced or deleted (remove both the file and the entry).
+
 ## Design notes
 
-- **Colour is functional only.** There is no brand accent. `--signal` marks what
-  you can act on; the status tokens mark what state an agent is in. Nothing else
-  is coloured. Every pairing clears WCAG AA — the badge palettes run 5.6:1 to
-  8.1:1, body text 17.4:1.
-- **The wordmark is the one place boldness is spent.** `Agent` in Plex Sans,
+The system takes its cues from editorial product sites: a soft grey ground with
+white surfaces on it, a serif for headings and a humanist sans for everything
+else, one green doing one job, and a page that alternates between something to
+look at and something to read.
+
+- **One accent, one job.** The green marks what you can act on — the primary
+  button, links, eyebrow labels, and the phrase in the headline that carries
+  the proposition — and nothing else. It comes in two values: `--signal`
+  (#3d6e3d) wherever green is text, because the fill green does not clear AA
+  at small sizes on the grey ground; `--accent` (#4e814e) for button fills,
+  darkening to `--signal` on hover. The status tokens mark what state an agent
+  is in. Every pairing clears WCAG AA.
+- **Two typefaces, two jobs.** Newsreader (serif, 500–600) carries every
+  heading and is the only place the site raises its voice. Inter carries
+  everything read as interface. Plex Mono survives for the wordmark numerals
+  and tabular counts.
+- **The wordmark is the one place boldness is spent.** `Agent` in Inter,
   `1000` in Plex Mono, tracked wide and hung from the cap line rather than the
-  baseline. The lift is derived from the two faces' shared 0.698em cap height,
-  not eyeballed — see the comment in `Wordmark.tsx` before changing the size.
-- **One motion sequence,** on `/` only, ~320ms. After it nothing moves except
-  focus and hover. `prefers-reduced-motion` kills all of it.
+  baseline. The lift is derived from the two faces' cap heights (0.727em and
+  0.698em), not eyeballed — see the comment in `Wordmark.tsx` before changing
+  the size.
+- **Bands, not a column.** The front page alternates grey and white full-width
+  bands, each holding one idea, so it reads as a sequence rather than a list.
+  Inner pages keep a single measure.
+- **One motion sequence,** on `/` only, ~320ms, plus the product frame stepping
+  through its four tabs once and the recorded threads playing as you reach
+  them. After that nothing moves except focus and hover.
+  `prefers-reduced-motion` kills all of it.
 - **Light only.** Everything is a CSS custom property, so a dark palette is a
   second block plus a re-check of the status contrasts, not a retrofit.
 

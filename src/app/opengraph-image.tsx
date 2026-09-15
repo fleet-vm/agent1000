@@ -9,11 +9,11 @@ import { SITE_NAME } from "@/lib/site";
  * than a screenshot or a stock graphic. What a link preview shows is the first
  * thing most people will see of this site, and it should look like the site.
  *
- * Set in the default sans rather than IBM Plex: `next/font/google` resolves
- * Plex at build for the pages, but ImageResponse needs the raw font bytes, and
- * shipping a .ttf into the repo for one image is not worth it yet. If the
+ * Set in the default sans rather than Inter: `next/font/google` resolves
+ * Inter at build for the pages, but ImageResponse needs the raw font bytes,
+ * and shipping a .ttf into the repo for one image is not worth it yet. If the
  * wordmark's exact face starts to matter on social, that is the change --
- * commit `IBMPlexSans-Medium.ttf` and pass it in `fonts`.
+ * commit `Inter-SemiBold.ttf` and pass it in `fonts`.
  */
 
 export const alt =
@@ -34,13 +34,13 @@ export default async function Image() {
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          background: "#fcfcfb", // --color-paper
-          color: "#14181c", // --color-ink
+          background: "#f5f5f4", // --color-paper
+          color: "#121215", // --color-ink
           padding: "96px",
         }}
       >
         <div style={{ display: "flex", alignItems: "flex-start" }}>
-          <span style={{ fontSize: 116, letterSpacing: "-0.02em" }}>Agent</span>
+          <span style={{ fontSize: 116, fontWeight: 600, letterSpacing: "-0.03em" }}>Agent</span>
           {/* The numeral lift, as on the wordmark itself. */}
           <span
             style={{
@@ -48,7 +48,7 @@ export default async function Image() {
               letterSpacing: "0.18em",
               marginTop: 14,
               marginLeft: 10,
-              color: "#0b4f3f", // --color-signal
+              color: "#3d6e3d", // --color-signal
             }}
           >
             1000
@@ -59,15 +59,14 @@ export default async function Image() {
           style={{
             width: "100%",
             height: 1,
-            background: "#dcddd9", // --color-rule
+            background: "#e4e4e4", // --color-rule
             marginTop: 40,
             marginBottom: 40,
           }}
         />
 
         <div style={{ display: "flex", fontSize: 38, lineHeight: 1.35 }}>
-          Give an agent a repetitive task in your institution, and an official
-          approves what it does.
+          Agents that do the work. Officials who approve it.
         </div>
 
         <div
@@ -75,7 +74,7 @@ export default async function Image() {
             display: "flex",
             marginTop: 36,
             fontSize: 26,
-            color: "#666c74", // --color-muted
+            color: "#5c5c66", // --color-muted
           }}
         >
           {SITE_NAME} · South Africa

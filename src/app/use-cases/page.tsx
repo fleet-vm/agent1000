@@ -40,10 +40,10 @@ export default function UseCasesPage() {
     <>
       <SiteHeader />
 
-      <main className="flex-1 px-6 py-10">
+      <main className="flex-1 px-6 py-12">
         <div className="mx-auto w-full max-w-[640px]">
-          <h1 className="text-head font-medium text-ink">Use cases</h1>
-          <p className="mt-2 text-body leading-6 text-ink">
+          <h1 className="font-display text-head font-semibold tracking-tight text-ink">Use cases</h1>
+          <p className="mt-4 text-lede text-muted">
             One recorded thread for each agent in the catalogue. They are
             illustrative — no institution is named and nothing here reports real
             work — but the shape is exact: the agent does the work, and the

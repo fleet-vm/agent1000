@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { agents } from "@/data/agents";
 import { PARTNERS_ARE_PLACEHOLDER } from "@/data/partners";
+import { posts } from "@/data/posts";
 import { url } from "@/lib/site";
 
 /**
@@ -52,6 +53,20 @@ export default function sitemap(): MetadataRoute.Sitemap {
       // agent connects to and what a person approves -- so they outrank the
       // form pages.
       priority: 0.8,
+    })),
+    {
+      url: url("/blog"),
+      lastModified,
+      changeFrequency: "weekly",
+      priority: 0.7,
+    },
+    // A post carries its own date, so this is the one place the sitemap can
+    // say something truer than the build time.
+    ...posts.map((post) => ({
+      url: url(`/blog/${post.slug}`),
+      lastModified: new Date(`${post.date}T00:00:00Z`),
+      changeFrequency: "yearly" as const,
+      priority: 0.6,
     })),
     {
       url: url("/resellers"),

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 import type { AgentCategory } from "@/data/agents";
 
-/** One icon per category, and icons appear nowhere else except the tiles. */
+/** One icon per category, and icons appear nowhere else except the cards. */
 const ICONS: Record<AgentCategory, LucideIcon> = {
   security: Shield,
   publishing: FileText,

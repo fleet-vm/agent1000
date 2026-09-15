@@ -76,9 +76,9 @@ export default function ResellersPage() {
       <SiteHeader />
 
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-[640px] px-6 py-8">
-          <h1 className="text-head text-ink">Resellers</h1>
-          <p className="mt-1 text-ui text-muted">
+        <div className="mx-auto w-full max-w-[640px] px-6 py-12">
+          <h1 className="font-display text-head font-semibold tracking-tight text-ink">Resellers</h1>
+          <p className="mt-3 text-lede text-muted">
             Sell Agent1000 agents into the institutions you already serve.
           </p>
 

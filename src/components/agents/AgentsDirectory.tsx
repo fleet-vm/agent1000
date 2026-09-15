@@ -125,9 +125,9 @@ export function AgentsDirectory() {
   );
 
   return (
-    <div className="mx-auto w-full max-w-[1120px] px-6 py-8">
-      <h1 className="text-head text-ink">Agents</h1>
-      <p className="mt-1 text-ui text-muted">
+    <div className="mx-auto w-full max-w-[1120px] px-6 py-12">
+      <h1 className="font-display text-head font-semibold tracking-tight text-ink">Agents</h1>
+      <p className="mt-3 text-lede text-muted">
         What each one does, how it is reached, and what a person approves.
       </p>
 
@@ -172,7 +172,7 @@ export function AgentsDirectory() {
           </div>
 
           {results.length > 0 ? (
-            <ul className="flex flex-col gap-2">
+            <ul className="grid gap-4 xl:grid-cols-2">
               {results.map((agent) => (
                 <AgentCard key={agent.slug} agent={agent} />
               ))}

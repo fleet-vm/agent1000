@@ -79,7 +79,7 @@ export default async function AgentPage({ params }: PageProps<"/agents/[slug]">)
       <SiteHeader />
 
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-[640px] px-6 py-8">
+        <div className="mx-auto w-full max-w-[640px] px-6 py-12">
           <Link
             href="/agents"
             className="inline-flex items-center gap-1.5 text-ui text-muted transition-colors duration-150 hover:text-signal"
@@ -89,7 +89,7 @@ export default async function AgentPage({ params }: PageProps<"/agents/[slug]">)
           </Link>
 
           <div className="mt-5 flex flex-wrap items-baseline gap-3">
-            <h1 className="text-head text-ink">{agent.name}</h1>
+            <h1 className="font-display text-head font-semibold tracking-tight text-ink">{agent.name}</h1>
             <StatusBadge status={agent.status} />
           </div>
 

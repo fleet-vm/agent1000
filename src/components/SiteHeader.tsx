@@ -1,15 +1,10 @@
-import Link from "next/link";
-import { Wordmark } from "@/components/Wordmark";
+import { SiteNav } from "@/components/SiteNav";
 
-/** Every page except `/`, which is the wordmark at full size and needs no nav. */
+/**
+ * Every page, `/` included. The wordmark, the tabs, and the one primary
+ * button. The nav is a client component because the active tab comes from the
+ * pathname and the small-screen menu has to open.
+ */
 export function SiteHeader() {
-  return (
-    <header className="border-b border-rule">
-      <div className="mx-auto w-full max-w-[1120px] px-6 py-3.5">
-        <Link href="/" className="inline-block">
-          <Wordmark className="text-[19px] text-ink" />
-        </Link>
-      </div>
-    </header>
-  );
+  return <SiteNav />;
 }

@@ -18,9 +18,9 @@ export default function LegalPage() {
     <>
       <SiteHeader />
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-[640px] px-6 py-8">
-          <h1 className="text-head text-ink">Legal</h1>
-          <p className="mt-3 text-body text-ink">
+        <div className="mx-auto w-full max-w-[640px] px-6 py-12">
+          <h1 className="font-display text-head font-semibold tracking-tight text-ink">Legal</h1>
+          <p className="mt-4 text-lede text-muted">
             Agent1000 is registered in South Africa.
           </p>
           <p className="mt-3 text-body text-muted">

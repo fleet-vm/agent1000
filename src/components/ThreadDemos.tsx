@@ -181,7 +181,7 @@ type AgentSideStep = Exclude<Step, { type: "user" }>;
 
 const isAgentSide = (step: Step): step is AgentSideStep => step.type !== "user";
 
-function Turn({ step, thread, lead }: { step: Step; thread: Thread; lead: boolean }) {
+export function Turn({ step, thread, lead }: { step: Step; thread: Thread; lead: boolean }) {
   if (step.type === "user") {
     return (
       <div className="anim-step flex flex-col items-end pl-10">

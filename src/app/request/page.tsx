@@ -31,7 +31,7 @@ export default function RequestPage() {
       <main className="flex-1">
         <Suspense
           fallback={
-            <div className="mx-auto w-full max-w-[640px] px-6 py-8">
+            <div className="mx-auto w-full max-w-[640px] px-6 py-12">
               <p className="text-ui text-muted">Reading the task.</p>
             </div>
           }

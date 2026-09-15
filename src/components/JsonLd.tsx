@@ -4,6 +4,7 @@ import {
   INSTITUTION_LABEL,
   type Agent,
 } from "@/data/agents";
+import type { Post } from "@/data/posts";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL, url } from "@/lib/site";
 
 /**
@@ -150,6 +151,27 @@ export function AgentJsonLd({ agent }: { agent: Agent }) {
             ],
           },
         ],
+      }}
+    />
+  );
+}
+
+/** A blog post. Dates and names restate what the page shows; nothing more. */
+export function BlogPostingJsonLd({ post }: { post: Post }) {
+  return (
+    <Script
+      data={{
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "@id": `${url(`/blog/${post.slug}`)}#post`,
+        headline: post.title,
+        description: post.description,
+        datePublished: post.date,
+        inLanguage: "en-ZA",
+        url: url(`/blog/${post.slug}`),
+        author: { "@type": "Organization", name: post.author },
+        publisher: { "@id": `${SITE_URL}/#organization` },
+        isPartOf: { "@type": "Blog", "@id": `${url("/blog")}#blog`, name: `${SITE_NAME} blog` },
       }}
     />
   );

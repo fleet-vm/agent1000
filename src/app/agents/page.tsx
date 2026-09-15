@@ -37,8 +37,8 @@ export default function AgentsPage() {
       <main className="flex-1">
         <Suspense
           fallback={
-            <div className="mx-auto w-full max-w-[1120px] px-6 py-8">
-              <h1 className="text-head text-ink">Agents</h1>
+            <div className="mx-auto w-full max-w-[1120px] px-6 py-12">
+              <h1 className="font-display text-head font-semibold tracking-tight text-ink">Agents</h1>
               <p className="mt-1 text-ui text-muted">Loading the catalogue.</p>
             </div>
           }

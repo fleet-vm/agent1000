@@ -86,7 +86,7 @@ export function RequestBody() {
     );
 
   return (
-    <div className="mx-auto w-full max-w-[640px] px-6 py-8">
+    <div className="mx-auto w-full max-w-[640px] px-6 py-12">
       {task ? (
         <>
           <h1 className="text-micro tracking-[0.06em] text-muted uppercase">
@@ -96,8 +96,8 @@ export function RequestBody() {
         </>
       ) : (
         <>
-          <h1 className="text-head text-ink">Describe the work</h1>
-          <p className="mt-1 text-ui text-muted">
+          <h1 className="font-display text-head font-semibold tracking-tight text-ink">Describe the work</h1>
+          <p className="mt-3 text-lede text-muted">
             Tell us the task and we will say which agent covers it, or whether
             one has to be built.
           </p>

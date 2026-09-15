@@ -1,0 +1,34 @@
+This is the first post on this blog, and it is here to explain the one design decision that every agent in the catalogue shares. It is also a formatting reference: headings, lists, a quotation and a table are all used below, so a new post can copy the shape.
+
+## The decision
+
+Every agent we build stops before it does anything binding. It will read a mailbox, work a portal, draft a letter, assemble a report — and then, at the moment the next action would change something in the institution, it stops and waits for a named official.
+
+That stop is not configurable. An agent cannot be told to skip it, and an official cannot delegate it to the agent. We are often asked to make it optional, and the answer is always the same.
+
+## Why it is not optional
+
+Three reasons, in the order they matter to a public institution:
+
+1. **The record has to name a person.** When an auditor asks who authorised a leave capture, a payment or a published statement, the answer cannot be "the software". Every approval is logged against the official who gave it.
+2. **The blast radius has to be visible.** An agent that signs in as itself, with its own account and its own permissions, can be seen and can be switched off. An agent with a standing licence to act cannot be reasoned about in the same way.
+3. **It is where the value is.** An official who reads a prepared decision and approves it in seconds has had the work done for them. An official who has to unpick a decision made without them has been given more work, not less.
+
+> The agent prepares; a named official decides. That order is the whole product.
+
+## What it looks like in practice
+
+| Step | Who acts | What happens |
+| --- | --- | --- |
+| Ask | The official | Describes the work in plain language |
+| Work | The agent | Reads, checks, drafts, assembles |
+| Approve | The official | Reads the prepared decision and signs it off — or does not |
+| Record | The agent | Carries out the approved action and logs who approved it |
+
+The [use cases](/use-cases) page shows this shape in a recorded thread for every agent in the catalogue. Watch where each one pauses.
+
+## What we will write about here
+
+Product notes when an agent moves from development into production. Field notes on what institutional work actually looks like from the inside of a mailbox. And the governance questions — the PFMA, the MFMA, records law — that decide what an agent is allowed to touch.
+
+We will not write case studies that name an institution, and we will not publish figures. Those rules are the same ones that govern the rest of the site.

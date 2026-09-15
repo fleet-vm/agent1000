@@ -89,11 +89,11 @@ export default function PartnersPage() {
       <SiteHeader />
 
       <main className="flex-1">
-        <div className="mx-auto w-full max-w-[880px] px-6 py-8">
-          <h1 className="text-head text-ink">
+        <div className="mx-auto w-full max-w-[880px] px-6 py-12">
+          <h1 className="font-display text-head font-semibold tracking-tight text-ink">
             Certified resellers and integrators
           </h1>
-          <p className="mt-1 text-ui text-muted">
+          <p className="mt-3 text-lede text-muted">
             The companies appointed to sell and integrate Agent1000 agents.
           </p>
 
