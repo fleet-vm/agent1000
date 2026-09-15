@@ -22,7 +22,7 @@ export const SITE_URL = (process.env.NEXT_PUBLIC_SITE_URL ?? FALLBACK).replace(
 export const SITE_NAME = "Agent1000";
 
 export const SITE_DESCRIPTION =
-  "AI Cloud Platform Workforce for South African public institutions. Agents do the repetitive operational work; a named official approves what they do.";
+  "An AI workforce for South African public institutions. Agents handle the repetitive work; a named official signs off on every binding action.";
 
 /** Absolute URL for a route. Sitemaps and canonicals both require one. */
 export function url(path = "/"): string {
