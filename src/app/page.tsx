@@ -92,10 +92,9 @@ export default function Home() {
             </h1>
 
             <p className="anim-rise delay-2 mt-6 max-w-[58ch] text-lede text-muted">
-              AI Cloud Platform Workforce for South African public institutions.
-              Agents take the repetitive operational work: leave, correspondence,
-              patching, publishing. A named official approves every binding
-              action.
+              An AI workforce for South African public institutions. Agents
+              handle the repetitive work: leave, correspondence, patching,
+              publishing. A named official signs off on every binding action.
             </p>
 
             <div className="anim-rise delay-3 mt-8 flex flex-wrap items-center justify-center gap-3">
