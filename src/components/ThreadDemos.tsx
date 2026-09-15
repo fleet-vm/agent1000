@@ -317,6 +317,50 @@ function AgentStep({ step }: { step: AgentSideStep }) {
   );
 }
 
+/**
+ * How long a thread rests on a turn before the next one lands. A step that
+ * reads as work holds longer than one that does not. Shared with the product
+ * frame on `/`, so the two play at the same pace.
+ */
+export function holdFor(step: Step): number {
+  return step.type === "work"
+    ? 2200
+    : step.type === "user"
+      ? 1100
+      : step.type === "card"
+        ? 1800
+        : 1500;
+}
+
+/** What shows while the next turn is on its way: `Working...` for work, a
+    typing indicator for anything else the agent is about to say. Nothing for
+    the person's own turn. */
+export function Pending({ step }: { step: Step }) {
+  if (step.type === "work") {
+    return (
+      <p className="anim-step flex items-center gap-2 pl-10 text-meta text-muted-ink">
+        <LoaderCircle aria-hidden="true" strokeWidth={1.5} className="size-3.5 shrink-0" />
+        <span>
+          Working
+          <span aria-hidden="true" className="anim-dot ml-0.5 inline-block">
+            …
+          </span>
+        </span>
+      </p>
+    );
+  }
+
+  if (!isAgentSide(step)) return null;
+
+  return (
+    <p aria-hidden="true" className="anim-dot flex gap-1 pl-10">
+      <span className="size-1.5 rounded-full bg-muted" />
+      <span className="size-1.5 rounded-full bg-muted" />
+      <span className="size-1.5 rounded-full bg-muted" />
+    </p>
+  );
+}
+
 function DemoThread({ thread, number }: { thread: Thread; number: number }) {
   const Icon = ICONS[thread.icon];
   const [shown, setShown] = useState(0);
@@ -350,16 +394,7 @@ function DemoThread({ thread, number }: { thread: Thread; number: number }) {
   useEffect(() => {
     if (!active || done) return;
 
-    const next = thread.steps[shown];
-    const hold = reducedRef.current
-      ? 0
-      : next.type === "work"
-        ? 2200
-        : next.type === "user"
-          ? 1100
-          : next.type === "card"
-            ? 1800
-            : 1500;
+    const hold = reducedRef.current ? 0 : holdFor(thread.steps[shown]);
 
     const timer = window.setTimeout(() => setShown((n) => n + 1), hold);
     return () => window.clearTimeout(timer);
@@ -419,25 +454,7 @@ function DemoThread({ thread, number }: { thread: Thread; number: number }) {
           />
         ))}
 
-        {pending?.type === "work" && (
-          <p className="anim-step flex items-center gap-2 pl-10 text-meta text-muted-ink">
-            <LoaderCircle aria-hidden="true" strokeWidth={1.5} className="size-3.5 shrink-0" />
-            <span>
-              Working
-              <span aria-hidden="true" className="anim-dot ml-0.5 inline-block">
-                …
-              </span>
-            </span>
-          </p>
-        )}
-
-        {pending !== null && pending.type !== "work" && isAgentSide(pending) && (
-          <p aria-hidden="true" className="anim-dot flex gap-1 pl-10">
-            <span className="size-1.5 rounded-full bg-muted" />
-            <span className="size-1.5 rounded-full bg-muted" />
-            <span className="size-1.5 rounded-full bg-muted" />
-          </p>
-        )}
+        {pending && <Pending step={pending} />}
       </div>
     </div>
   );

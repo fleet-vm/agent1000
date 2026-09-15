@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useState, useSyncExternalStore } from "react";
 import { Search } from "lucide-react";
-import { ICONS, Turn } from "@/components/ThreadDemos";
+import { holdFor, ICONS, Pending, Turn } from "@/components/ThreadDemos";
 import { officeThreads, type Step, type Thread } from "@/data/threads";
 import { cn } from "@/lib/cn";
 
@@ -22,10 +22,15 @@ import { cn } from "@/lib/cn";
  * rendered with the same turn components, so the picture here and the demos
  * below can never drift apart.
  *
- * The tabs advance on their own, once through, and stop the moment the reader
- * touches anything. Under `prefers-reduced-motion` they do not advance at all.
+ * Every switch, of desk or of step, replays that slice a turn at a time at
+ * the same pace as the demos. The tabs advance on their own, once through,
+ * each one waiting for its playback to finish and then resting a beat, and
+ * stop the moment the reader touches anything. Under `prefers-reduced-motion`
+ * a slice lands whole and the tabs do not advance at all.
  */
-const HOLD_MS = 5200;
+
+/** How long a finished slice rests before the next tab takes over. */
+const REST_MS = 2400;
 
 type StepId = "ask" | "connect" | "approve" | "repeat";
 
@@ -102,41 +107,125 @@ const EMPTY: Record<StepId, string> = {
     "This desk works on request. Say “do this every time” and it becomes standing work, approval step included.",
 };
 
+/**
+ * One slice of a thread, revealed a turn at a time. Mounted fresh (keyed) on
+ * every desk or step change, so it always starts from nothing.
+ */
+function Playback({
+  thread,
+  from,
+  to,
+  instant,
+  onDone,
+}: {
+  thread: Thread;
+  from: number;
+  to: number;
+  instant: boolean;
+  onDone: () => void;
+}) {
+  const turns = thread.steps.slice(from, to);
+  // The first turn lands at once: an empty frame for a second reads as broken.
+  const [shown, setShown] = useState(instant ? turns.length : Math.min(1, turns.length));
+  const done = shown >= turns.length;
+
+  useEffect(() => {
+    if (done) return;
+    const hold = instant ? 0 : holdFor(turns[shown]);
+    const timer = window.setTimeout(() => setShown((n) => n + 1), hold);
+    return () => window.clearTimeout(timer);
+  }, [done, instant, shown, turns]);
+
+  useEffect(() => {
+    if (done) onDone();
+  }, [done, onDone]);
+
+  const pending = done ? null : turns[shown];
+
+  return (
+    <>
+      {turns.slice(0, shown).map((step, i) => {
+        const absolute = from + i;
+        const lead =
+          isAgentSide(step) && (i === 0 || !isAgentSide(thread.steps[absolute - 1]));
+        return <Turn key={absolute} step={step} thread={thread} lead={lead} />;
+      })}
+      {pending && <Pending step={pending} />}
+    </>
+  );
+}
+
+const REDUCE = "(prefers-reduced-motion: reduce)";
+
+function subscribeReduce(notify: () => void) {
+  const query = window.matchMedia(REDUCE);
+  query.addEventListener("change", notify);
+  return () => query.removeEventListener("change", notify);
+}
+
+/** The reader's motion preference, live. False on the server. */
+function useReducedMotion(): boolean {
+  return useSyncExternalStore(
+    subscribeReduce,
+    () => window.matchMedia(REDUCE).matches,
+    () => false,
+  );
+}
+
+/** A step the desk does not have. Counts as played the moment it shows. */
+function EmptySlice({ text, onDone }: { text: string; onDone: () => void }) {
+  useEffect(() => onDone(), [onDone]);
+  return <p className="anim-step max-w-[48ch] text-ui leading-6 text-muted">{text}</p>;
+}
+
+/** The full length of a slice's playback plus its rest: the fill duration. */
+function playbackLength(steps: Step[], from: number, to: number): number {
+  return steps.slice(from, to).reduce((sum, step) => sum + holdFor(step), 0) + REST_MS;
+}
+
 export function StepTabs() {
   const baseId = useId();
   const [deskIndex, setDeskIndex] = useState(0);
   const [index, setIndex] = useState(0);
   const [auto, setAuto] = useState(true);
-  const reducedRef = useRef(false);
-
-  useEffect(() => {
-    reducedRef.current = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (reducedRef.current) setAuto(false);
-  }, []);
-
-  // Once through, then rest on the last tab. A frame that loops forever is a
-  // distraction next to copy that is trying to be read.
-  const running = auto && index < TABS.length - 1;
-
-  useEffect(() => {
-    if (!running) return;
-    const timer = window.setTimeout(() => setIndex((i) => i + 1), HOLD_MS);
-    return () => window.clearTimeout(timer);
-  }, [running, index]);
+  const reduced = useReducedMotion();
+  // Set by the playback when its last turn has landed; cleared on every
+  // switch, because the new slice has not played yet.
+  const [played, setPlayed] = useState(false);
 
   const thread = desks[deskIndex];
   const active = TABS[index];
   const [from, to] = windows(thread.steps)[active.id];
-  const turns = thread.steps.slice(from, to);
+  const empty = to <= from;
   const automations = thread.steps.filter((s) => s.type === "auto");
+
+  // Once through, then rest on the last tab. A frame that loops forever is a
+  // distraction next to copy that is trying to be read.
+  const running = auto && !reduced && index < TABS.length - 1;
+
+  // The next tab takes over only once this slice has finished playing and
+  // rested a beat. A slice with no turns rests for the same beat.
+  useEffect(() => {
+    if (!running || !played) return;
+    const timer = window.setTimeout(() => {
+      setPlayed(false);
+      setIndex((i) => i + 1);
+    }, REST_MS);
+    return () => window.clearTimeout(timer);
+  }, [running, played]);
+
+  const onDone = useCallback(() => setPlayed(true), []);
+  const fillMs = playbackLength(thread.steps, from, to);
 
   function selectStep(i: number) {
     setAuto(false);
+    setPlayed(false);
     setIndex(i);
   }
 
   function selectDesk(i: number) {
     setAuto(false);
+    setPlayed(false);
     setDeskIndex(i);
   }
 
@@ -239,20 +328,16 @@ export function StepTabs() {
               aria-labelledby={`${baseId}-tab-${index}`}
               className="flex flex-col gap-5 px-4 py-5 sm:px-6"
             >
-              {turns.length === 0 ? (
-                <p className="anim-step max-w-[48ch] text-ui leading-6 text-muted">
-                  {EMPTY[active.id]}
-                </p>
+              {empty ? (
+                <EmptySlice text={EMPTY[active.id]} onDone={onDone} />
               ) : (
-                turns.map((step, i) => {
-                  const absolute = from + i;
-                  const lead =
-                    isAgentSide(step) &&
-                    (i === 0 || !isAgentSide(thread.steps[absolute - 1]));
-                  return (
-                    <Turn key={absolute} step={step} thread={thread} lead={lead} />
-                  );
-                })
+                <Playback
+                  thread={thread}
+                  from={from}
+                  to={to}
+                  instant={reduced}
+                  onDone={onDone}
+                />
               )}
             </div>
           </div>
@@ -287,7 +372,7 @@ export function StepTabs() {
                   aria-hidden="true"
                   key={running ? "running" : "held"}
                   className={cn("absolute inset-x-0 -top-px h-0.5 bg-signal", running && "anim-fill")}
-                  style={running ? { animationDuration: `${HOLD_MS}ms` } : undefined}
+                  style={running ? { animationDuration: `${fillMs}ms` } : undefined}
                 />
               )}
               <span className="flex items-baseline gap-2">
