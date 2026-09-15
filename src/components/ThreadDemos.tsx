@@ -48,7 +48,7 @@ import type { Step, Thread, ThreadIcon } from "@/data/threads";
  * colour. Position, shape and weight separate everything else.
  */
 
-const ICONS: Record<ThreadIcon, LucideIcon> = {
+export const ICONS: Record<ThreadIcon, LucideIcon> = {
   people: UserCheck,
   assistant: ClipboardList,
   mail: Mail,

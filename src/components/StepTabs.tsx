@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import { ClipboardList, FileText, Mail, Search, UserCheck } from "lucide-react";
-import { Turn } from "@/components/ThreadDemos";
+import { Search } from "lucide-react";
+import { ICONS, Turn } from "@/components/ThreadDemos";
 import { officeThreads, type Step, type Thread } from "@/data/threads";
 import { cn } from "@/lib/cn";
 
@@ -12,69 +12,99 @@ import { cn } from "@/lib/cn";
  * This is the section that has to do the explaining, because "AI agent" means
  * nothing on its own and everything a reader already assumes about it is
  * either too small (a chatbot) or too large (software that acts on the
- * institution without asking). The four tabs say what the arc actually is --
+ * institution without asking). The four tabs say what the arc actually is,
  * and `Approve` sits third on purpose, between the work and the repetition,
  * because that is where it sits in the product.
  *
- * The frame replays one thread, the leave request, a few turns at a time. It
- * is the same recording that plays in full further down the page, rendered
- * with the same turn components, so the picture here and the demos below can
- * never drift apart.
+ * The frame holds the four desks. The sidebar picks the desk; the tabs pick
+ * the step; the frame shows that desk's thread at that step, a few turns at a
+ * time. They are the same recordings that play in full further down the page,
+ * rendered with the same turn components, so the picture here and the demos
+ * below can never drift apart.
  *
  * The tabs advance on their own, once through, and stop the moment the reader
- * touches one. Under `prefers-reduced-motion` they do not advance at all.
+ * touches anything. Under `prefers-reduced-motion` they do not advance at all.
  */
 const HOLD_MS = 5200;
 
-type StepTab = {
-  id: string;
-  title: string;
-  body: string;
-  /** Which turns of the thread this step shows: [from, to). */
-  turns: [number, number];
-};
+type StepId = "ask" | "connect" | "approve" | "repeat";
 
-const TABS: StepTab[] = [
+const TABS: { id: StepId; title: string; body: string }[] = [
   {
     id: "ask",
     title: "Ask",
     body: "Say what you need done, in the words you would use with a colleague. No forms, no scripting, no new system to learn.",
-    turns: [0, 2],
   },
   {
     id: "connect",
     title: "Connect",
     body: "The agent works inside the systems the institution already runs: the payroll portal, the mailbox, the CMS, the document store.",
-    turns: [2, 5],
   },
   {
     id: "approve",
     title: "Approve",
     body: "Every binding action stops and waits for a named official. Nothing is captured, sent, published or changed on its own.",
-    turns: [5, 7],
   },
   {
     id: "repeat",
     title: "Repeat",
     body: "Say “do this every Monday” and the one-off becomes standing work. The approval step comes with it.",
-    turns: [9, 11],
   },
 ];
 
-const thread: Thread = officeThreads[0];
-
-/** The sidebar of the frame: the desks, as they would be listed in the product. */
-const DESKS = [
-  { name: "People Desk", icon: UserCheck },
-  { name: "Executive Assistant", icon: ClipboardList },
-  { name: "Correspondence", icon: Mail },
-  { name: "Project Status", icon: FileText },
-];
+/** The desks in the frame, in the order they appear below. */
+const desks: Thread[] = officeThreads;
 
 const isAgentSide = (step: Step) => step.type !== "user";
 
+/**
+ * Which turns of a thread belong to which step. Derived from the shape of the
+ * recording rather than written per thread, so a new desk in `threads.ts`
+ * slots in without anyone maintaining index ranges here.
+ *
+ *   ask      the opening request and the agent's reply, up to the first
+ *            system it reaches for
+ *   connect  from that first connection to the approval gate, or to the
+ *            first automation if the desk never binds anything
+ *   approve  the gate, the decision, and what follows it, up to the next
+ *            request
+ *   repeat   the first "do this every time" and everything after it
+ *
+ * A step with no turns is a fact about the desk (the morning brief binds
+ * nothing; correspondence has no standing version yet), and the frame says so
+ * rather than showing an empty panel.
+ */
+function windows(steps: Step[]): Record<StepId, [number, number]> {
+  const n = steps.length;
+  const firstConnect = steps.findIndex((s) => s.type === "connect" || s.type === "work");
+  const gate = steps.findIndex((s) => s.type === "gate");
+  const repeat = steps.findIndex((s, i) => s.type === "user" && steps[i + 1]?.type === "auto");
+  const afterGate = gate >= 0 ? steps.findIndex((s, i) => i > gate && s.type === "user") : -1;
+
+  const askEnd = firstConnect >= 0 ? firstConnect : n;
+  const connectEnd = gate >= 0 ? gate : repeat >= 0 ? repeat : n;
+  const approveEnd = afterGate >= 0 ? afterGate : n;
+
+  return {
+    ask: [0, askEnd],
+    connect: [askEnd, connectEnd],
+    approve: gate >= 0 ? [gate, approveEnd] : [0, 0],
+    repeat: repeat >= 0 ? [repeat, n] : [0, 0],
+  };
+}
+
+const EMPTY: Record<StepId, string> = {
+  ask: "",
+  connect: "",
+  approve:
+    "Nothing on this desk binds anything, so nothing stops. A brief is read, not acted on.",
+  repeat:
+    "This desk works on request. Say “do this every time” and it becomes standing work, approval step included.",
+};
+
 export function StepTabs() {
   const baseId = useId();
+  const [deskIndex, setDeskIndex] = useState(0);
   const [index, setIndex] = useState(0);
   const [auto, setAuto] = useState(true);
   const reducedRef = useRef(false);
@@ -94,24 +124,58 @@ export function StepTabs() {
     return () => window.clearTimeout(timer);
   }, [running, index]);
 
+  const thread = desks[deskIndex];
   const active = TABS[index];
-  const [from, to] = active.turns;
+  const [from, to] = windows(thread.steps)[active.id];
   const turns = thread.steps.slice(from, to);
+  const automations = thread.steps.filter((s) => s.type === "auto");
 
-  function select(i: number) {
+  function selectStep(i: number) {
     setAuto(false);
     setIndex(i);
+  }
+
+  function selectDesk(i: number) {
+    setAuto(false);
+    setDeskIndex(i);
   }
 
   function onKeyDown(e: React.KeyboardEvent) {
     if (e.key === "ArrowRight") {
       e.preventDefault();
-      select((index + 1) % TABS.length);
+      selectStep((index + 1) % TABS.length);
     } else if (e.key === "ArrowLeft") {
       e.preventDefault();
-      select((index - 1 + TABS.length) % TABS.length);
+      selectStep((index - 1 + TABS.length) % TABS.length);
     }
   }
+
+  const deskList = (
+    <ul className="flex gap-1 md:flex-col md:gap-0.5">
+      {desks.map((desk, i) => {
+        const Icon = ICONS[desk.icon];
+        const selected = i === deskIndex;
+        return (
+          <li key={desk.id} className="shrink-0">
+            <button
+              type="button"
+              aria-pressed={selected}
+              onClick={() => selectDesk(i)}
+              className={cn(
+                "flex w-full items-center gap-2 rounded-sm px-2 py-1.5 text-left text-meta whitespace-nowrap transition-colors duration-150",
+                selected
+                  ? "bg-surface text-ink shadow-[0_0_0_1px_var(--color-rule)] md:shadow-none"
+                  : "text-muted hover:text-ink",
+              )}
+            >
+              <Icon aria-hidden="true" strokeWidth={1.5} className="size-3.5 shrink-0" />
+              {desk.name}
+            </button>
+          </li>
+        );
+      })}
+    </ul>
+  );
 
   return (
     <section aria-labelledby="how-heading">
@@ -120,48 +184,43 @@ export function StepTabs() {
       </h2>
 
       {/* ------------------------------------------------------- the frame */}
-      <div
-        role="tabpanel"
-        id={`${baseId}-panel`}
-        aria-labelledby={`${baseId}-tab-${index}`}
-        className="overflow-hidden rounded-xl border border-rule bg-surface shadow-[0_1px_2px_rgba(18,18,21,0.04),0_12px_40px_-24px_rgba(18,18,21,0.25)]"
-      >
+      <div className="overflow-hidden rounded-xl border border-rule bg-surface shadow-[0_1px_2px_rgba(18,18,21,0.04),0_12px_40px_-24px_rgba(18,18,21,0.25)]">
         <div className="grid md:grid-cols-[220px_1fr]">
-          <aside
-            aria-hidden="true"
-            className="hidden border-r border-rule bg-paper px-3 py-4 md:block"
-          >
+          <aside className="hidden border-r border-rule bg-paper px-3 py-4 md:block">
             <p className="px-2 text-micro font-medium tracking-[0.12em] text-muted uppercase">
               Desks
             </p>
-            <ul className="mt-2 flex flex-col gap-0.5">
-              {DESKS.map((desk, i) => (
-                <li
-                  key={desk.name}
-                  className={cn(
-                    "flex items-center gap-2 rounded-sm px-2 py-1.5 text-meta",
-                    i === 0 ? "bg-surface text-ink" : "text-muted",
-                  )}
-                >
-                  <desk.icon aria-hidden="true" strokeWidth={1.5} className="size-3.5 shrink-0" />
-                  {desk.name}
-                </li>
-              ))}
-            </ul>
+            <nav aria-label="Desks" className="mt-2">
+              {deskList}
+            </nav>
 
             <p className="mt-6 px-2 text-micro font-medium tracking-[0.12em] text-muted uppercase">
               Standing work
             </p>
             <ul className="mt-2 flex flex-col gap-0.5 text-meta text-muted">
-              <li className="px-2 py-1.5">Daily brief · 07:00</li>
-              <li className="px-2 py-1.5">Unanswered mail · 11:00, 15:00</li>
-              <li className={cn("px-2 py-1.5", active.id === "repeat" && "text-ink")}>
-                {active.id === "repeat" ? "Incoming leave requests · new" : ""}
-              </li>
+              {automations.length === 0 && <li className="px-2 py-1.5">None yet</li>}
+              {automations.map((step) =>
+                step.type === "auto" ? (
+                  <li
+                    key={step.title}
+                    className={cn("px-2 py-1.5", active.id === "repeat" && "text-ink")}
+                  >
+                    {step.title}
+                  </li>
+                ) : null,
+              )}
             </ul>
           </aside>
 
-          <div className="min-h-[380px] md:min-h-[420px]">
+          <div className="min-h-[380px] min-w-0 md:min-h-[420px]">
+            {/* Small screens have no sidebar, so the desks sit in a row. */}
+            <nav
+              aria-label="Desks"
+              className="overflow-x-auto border-b border-rule bg-paper px-3 py-2 md:hidden"
+            >
+              {deskList}
+            </nav>
+
             <div className="flex items-center gap-3 border-b border-rule px-4 py-3">
               <p className="text-ui font-medium text-ink">{thread.title}</p>
               <p className="hidden text-meta text-muted sm:block">{thread.tools}</p>
@@ -171,17 +230,30 @@ export function StepTabs() {
               </span>
             </div>
 
-            {/* Keyed on the tab so the turns re-enter each time it changes. */}
-            <div key={active.id} className="flex flex-col gap-5 px-4 py-5 sm:px-6">
-              {turns.map((step, i) => {
-                const absolute = from + i;
-                const lead =
-                  isAgentSide(step) &&
-                  (i === 0 || !isAgentSide(thread.steps[absolute - 1]));
-                return (
-                  <Turn key={absolute} step={step} thread={thread} lead={lead} />
-                );
-              })}
+            {/* Keyed on desk and tab so the turns re-enter each time either
+                changes. */}
+            <div
+              key={`${thread.id}-${active.id}`}
+              role="tabpanel"
+              id={`${baseId}-panel`}
+              aria-labelledby={`${baseId}-tab-${index}`}
+              className="flex flex-col gap-5 px-4 py-5 sm:px-6"
+            >
+              {turns.length === 0 ? (
+                <p className="anim-step max-w-[48ch] text-ui leading-6 text-muted">
+                  {EMPTY[active.id]}
+                </p>
+              ) : (
+                turns.map((step, i) => {
+                  const absolute = from + i;
+                  const lead =
+                    isAgentSide(step) &&
+                    (i === 0 || !isAgentSide(thread.steps[absolute - 1]));
+                  return (
+                    <Turn key={absolute} step={step} thread={thread} lead={lead} />
+                  );
+                })
+              )}
             </div>
           </div>
         </div>
@@ -205,7 +277,7 @@ export function StepTabs() {
               aria-selected={selected}
               aria-controls={`${baseId}-panel`}
               tabIndex={selected ? 0 : -1}
-              onClick={() => select(i)}
+              onClick={() => selectStep(i)}
               className="group relative flex flex-col items-start border-t border-rule px-1 pt-3 pb-4 text-left"
             >
               {/* The rule: grey underneath; green, and filling across for
