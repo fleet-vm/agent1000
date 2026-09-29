@@ -25,8 +25,12 @@ import { cn } from "@/lib/cn";
  * Every switch, of desk or of step, replays that slice a turn at a time at
  * the same pace as the demos. The tabs advance on their own, once through,
  * each one waiting for its playback to finish and then resting a beat, and
- * stop the moment the reader touches anything. Under `prefers-reduced-motion`
- * a slice lands whole and the tabs do not advance at all.
+ * stop the moment the reader picks a step. Picking a desk starts that desk's
+ * walkthrough from `Ask`, so every desk gets the same tour the first one got
+ * on load; otherwise a reader who arrived after the tabs had come to rest on
+ * `Repeat` saw a desk with no standing work as one static sentence. Under
+ * `prefers-reduced-motion` a slice lands whole and the tabs do not advance
+ * at all.
  */
 
 /** How long a finished slice rests before the next tab takes over. */
@@ -67,9 +71,11 @@ const isAgentSide = (step: Step) => step.type !== "user";
  * recording rather than written per thread, so a new desk in `threads.ts`
  * slots in without anyone maintaining index ranges here.
  *
- *   ask      the opening request and the agent's reply, up to the first
- *            system it reaches for
- *   connect  from that first connection to the approval gate, or to the
+ *   ask      the opening request and the agent's first reply. On a desk
+ *            where the agent answers by reaching for a system, that
+ *            connection is the reply, and the slice ends on it rather than
+ *            on a lone bubble that nothing follows
+ *   connect  from the first connection to the approval gate, or to the
  *            first automation if the desk never binds anything
  *   approve  the gate, the decision, and what follows it, up to the next
  *            request
@@ -86,13 +92,16 @@ function windows(steps: Step[]): Record<StepId, [number, number]> {
   const repeat = steps.findIndex((s, i) => s.type === "user" && steps[i + 1]?.type === "auto");
   const afterGate = gate >= 0 ? steps.findIndex((s, i) => i > gate && s.type === "user") : -1;
 
-  const askEnd = firstConnect >= 0 ? firstConnect : n;
+  const firstReply = steps.findIndex(isAgentSide);
+
+  const askEnd = firstReply >= 0 ? firstReply + 1 : n;
+  const connectStart = firstConnect >= 0 ? firstConnect : askEnd;
   const connectEnd = gate >= 0 ? gate : repeat >= 0 ? repeat : n;
   const approveEnd = afterGate >= 0 ? afterGate : n;
 
   return {
     ask: [0, askEnd],
-    connect: [askEnd, connectEnd],
+    connect: [connectStart, connectEnd],
     approve: gate >= 0 ? [gate, approveEnd] : [0, 0],
     repeat: repeat >= 0 ? [repeat, n] : [0, 0],
   };
@@ -178,9 +187,10 @@ function EmptySlice({ text, onDone }: { text: string; onDone: () => void }) {
   return <p className="anim-step max-w-[48ch] text-ui leading-6 text-muted">{text}</p>;
 }
 
-/** The full length of a slice's playback plus its rest: the fill duration. */
+/** The full length of a slice's playback plus its rest: the fill duration.
+    The first turn lands at once, so only the turns after it hold. */
 function playbackLength(steps: Step[], from: number, to: number): number {
-  return steps.slice(from, to).reduce((sum, step) => sum + holdFor(step), 0) + REST_MS;
+  return steps.slice(from + 1, to).reduce((sum, step) => sum + holdFor(step), 0) + REST_MS;
 }
 
 export function StepTabs() {
@@ -223,9 +233,11 @@ export function StepTabs() {
     setIndex(i);
   }
 
+  // A desk is a story, so it starts from the top and tells itself through.
   function selectDesk(i: number) {
-    setAuto(false);
+    setAuto(true);
     setPlayed(false);
+    setIndex(0);
     setDeskIndex(i);
   }
 
