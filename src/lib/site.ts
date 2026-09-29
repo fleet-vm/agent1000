@@ -30,7 +30,8 @@ export function url(path = "/"): string {
 }
 
 /**
- * The share card produced by `src/app/opengraph-image.tsx`.
+ * The share card, `src/app/opengraph-image.png`. Next serves a static metadata
+ * image at its filename, extension included.
  *
  * A page that sets its own `openGraph` block replaces the inherited one
  * wholesale, image included -- so every page that customises the title has to
@@ -38,4 +39,4 @@ export function url(path = "/"): string {
  * still claiming `summary_large_image`. Referencing it from here means there is
  * one string to change, not five.
  */
-export const OG_IMAGE = "/opengraph-image";
+export const OG_IMAGE = "/opengraph-image.png";

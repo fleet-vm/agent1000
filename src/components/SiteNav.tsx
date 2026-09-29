@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu, X } from "lucide-react";
-import { Wordmark } from "@/components/Wordmark";
+import { Logo } from "@/components/Logo";
 import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/lib/cn";
 
@@ -46,8 +46,9 @@ export function SiteNav() {
   return (
     <header className="sticky top-0 z-30 border-b border-rule bg-paper/90 backdrop-blur">
       <div className="mx-auto flex w-full max-w-[1120px] items-center gap-4 px-6">
-        <Link href="/" className="inline-block py-3.5">
-          <Wordmark className="text-[19px] text-ink" />
+        {/* `label={false}`: the link already names it, so it is announced once. */}
+        <Link href="/" aria-label="Agent1000 home" className="inline-block py-3.5">
+          <Logo size={19} label={false} />
         </Link>
 
         <nav aria-label="Primary" className="hidden md:flex md:flex-1 md:justify-center">
