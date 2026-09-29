@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Wordmark } from "@/components/Wordmark";
+import { Logo } from "@/components/Logo";
 
 /**
  * Three short columns and a hairline row. The entity name must match the CIPC
@@ -41,8 +41,8 @@ export function SiteFooter() {
       <div className="mx-auto w-full max-w-[1120px] px-6 py-12">
         <div className="grid gap-10 sm:grid-cols-[1.4fr_1fr_1fr_1fr]">
           <div>
-            <Link href="/" className="inline-block">
-              <Wordmark className="text-[19px] text-ink" />
+            <Link href="/" aria-label="Agent1000 home" className="inline-block">
+              <Logo size={19} label={false} />
             </Link>
             <p className="mt-3 max-w-[30ch] text-meta text-muted">
               An AI workforce for South African public institutions.
