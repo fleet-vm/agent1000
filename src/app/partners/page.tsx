@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Download } from "lucide-react";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { buttonClass } from "@/components/ui/Button";
 import { PartnerCard } from "@/components/partners/PartnerCard";
 import {
   PARTNERS_ARE_PLACEHOLDER,
   partnersByName,
   ROLE_LABEL,
   ROLE_NOTE,
-  uncoveredProvinces,
   type PartnerRole,
 } from "@/data/partners";
 import { SALES_EMAIL } from "@/lib/demoRequest";
@@ -75,15 +76,7 @@ function Section({
   );
 }
 
-/** `a, b and c`. Used once, for the provinces with nobody in them. */
-function formatList(items: string[]): string {
-  if (items.length <= 1) return items.join("");
-  return `${items.slice(0, -1).join(", ")} and ${items[items.length - 1]}`;
-}
-
 export default function PartnersPage() {
-  const uncovered = uncoveredProvinces();
-
   return (
     <>
       <SiteHeader />
@@ -152,20 +145,32 @@ export default function PartnersPage() {
                 </span>
               </div>
 
+              {/* Plain anchors, not ButtonLink: a file is not a route, and a
+                  static host sends no Content-Disposition, so the `download`
+                  attribute is what names the file. */}
+              <div className="mt-3 flex flex-wrap gap-2">
+                <a
+                  href="/partners/register.pdf"
+                  download="agent1000-certified-partners.pdf"
+                  className={buttonClass("primary")}
+                >
+                  <Download aria-hidden="true" strokeWidth={1.5} className="size-4" />
+                  Download certified list (PDF)
+                </a>
+                <a
+                  href="/partners/register.csv"
+                  download="agent1000-certified-partners.csv"
+                  className={buttonClass("secondary")}
+                >
+                  CSV
+                </a>
+              </div>
+
               <ul className="mt-3 grid grid-cols-1 gap-3 md:grid-cols-2">
                 {partnersByName.map((partner) => (
                   <PartnerCard key={partner.slug} partner={partner} />
                 ))}
               </ul>
-
-              {uncovered.length > 0 && (
-                <p className="mt-3 text-meta text-muted">
-                  Nobody is appointed yet in {formatList(uncovered)}. An
-                  institution there works with us directly, or with a partner
-                  above who is willing to travel &mdash; anyone claiming the
-                  territory is claiming something they do not have.
-                </p>
-              )}
             </section>
 
             <Section heading="Applying">
