@@ -111,28 +111,28 @@ export const partners: Partner[] = [
    *
    *   - roles          reseller, integrator, or both
    *   - coverage/town  which province they work, and from where
-   *   - agents         which agents they are appointed on
    *   - focus          one line on the work they do
-   *   - certificate    the number we issue, and the dates it runs between
    *
-   * Until the certificate is filled in, `assertRegisterIsComplete` refuses to
-   * build a live register containing this entry.
+   * Agents and certificate issued 14 October 2026.
    */
   {
     slug: "just-corporation",
     name: "Just Corporation",
     roles: [],
-    agents: [],
+    certificate: "A1K-2026-0113",
+    certifiedSince: "2026-10",
+    certifiedUntil: "2028-10",
+    agents: ["contentdesk", "vulnwatch", "recordsdesk", "sitewatch"],
     website: "https://just-corporation.com",
     email: "Malesela.molepo@just-corporation.com",
     contactName: "Malesela Molepo",
     phone: "0817826517",
   },
   /**
-   * Supplied 10 September 2026. Appointed as an integrator; the rest of the
-   * entry is missing for the same reason as the one above -- coverage, agents,
-   * focus and the certificate are ours to issue or theirs to confirm, not ours
-   * to invent. No website was given.
+   * Supplied 10 September 2026. Appointed as an integrator; coverage and focus
+   * are missing for the same reason as the one above -- theirs to confirm, not
+   * ours to invent. No website was given. Agents and certificate issued
+   * 14 October 2026.
    *
    * Registered address: 375 Aventurine Street, Zambezi Manor Lifestyle Estate,
    * Derdepoort.
@@ -141,8 +141,11 @@ export const partners: Partner[] = [
     slug: "mokaba-freight-solutions",
     name: "Mokaba Freight Solutions",
     roles: ["integrator"],
+    certificate: "A1K-2026-0114",
+    certifiedSince: "2026-10",
+    certifiedUntil: "2028-10",
     town: "Derdepoort",
-    agents: [],
+    agents: ["contentdesk", "vulnwatch", "recordsdesk", "sitewatch"],
     email: "info.mokabafreight@gmail.com",
     contactName: "Itumeleng Mokaba",
     phone: "0815839649",
@@ -171,7 +174,7 @@ export const partners: Partner[] = [
     certifiedUntil: "2027-06",
     coverage: "Gauteng",
     town: "Johannesburg",
-    agents: ["contentdesk","VulnWatch", "DocAgent"],
+    agents: ["contentdesk", "vulnwatch", "recordsdesk", "sitewatch"],
     focus:
       "Reporting and records work for local municipalities and municipal entities.",
     website: "https://officesupply.africa",
@@ -186,7 +189,7 @@ export const partners: Partner[] = [
     certifiedUntil: "2028-01",
     coverage: "Gauteng",
     town: "Pretoria",
-    agents: ["ContentDesk", "PMAgent", " VulnWatch"],
+    agents: ["contentdesk", "vulnwatch", "recordsdesk", "sitewatch"],
     focus:
       "Data extraction and reporting pipelines, mostly in higher education.",
     website: "https://backloggersoffices.co.za",
@@ -204,8 +207,7 @@ export const partners: Partner[] = [
     agents: ["contentdesk","vulnwatch", "recordsdesk", "sitewatch"],
     focus:
       "Website and records systems for metros and the entities they own.",
-    website: "https://ntsikadigital.example.com",
-    email: "partners@ntsikadigital.example.com",
+    email: "KoenaConsultants@outlook.com",
   },
 ];
 
@@ -258,22 +260,6 @@ function assertRegisterIsComplete(): void {
 }
 
 assertRegisterIsComplete();
-
-/**
- * Provinces with nobody appointed in them.
- *
- * Said out loud because the alternative is worse: an institution in a province
- * with no partner should learn that here, not from a company that turns up
- * claiming the territory. A partner covering "National" clears every province.
- */
-export function uncoveredProvinces(): string[] {
-  if (partners.some((p) => p.coverage === "National")) return [];
-
-  const covered = new Set(
-    partners.map((p) => p.coverage).filter((c) => c !== undefined),
-  );
-  return COVERAGE.filter((c) => c !== "National" && !covered.has(c));
-}
 
 const MONTHS = [
   "January",
