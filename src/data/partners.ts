@@ -16,24 +16,21 @@
  *  3. A partner is only ever certified on agents that exist. Certifying anyone
  *     on a `development` agent would put a claim on this page that the agent
  *     catalogue contradicts two clicks away.
- *
- * Everything below is placeholder data. See PARTNERS_ARE_PLACEHOLDER.
  */
 
 import { getAgent, type Agent } from "@/data/agents";
 import { COVERAGE } from "@/lib/resellerApplication";
 
 /**
- * Flip to `false` in the same commit that replaces the entries below with real
- * appointed partners.
+ * `false`: the register holds real appointments (since 14 October 2026). Set it
+ * back to `true` only if the entries below are ever swapped for examples.
  *
- * While it is `true` the page carries a visible notice and is served
- * `noindex`, so a search engine never gets the chance to index invented
+ * While it is `true` the page is served `noindex`, so a search engine never gets the chance to index invented
  * companies as certified ones, and nobody who lands on the page mistakes an
  * example for an appointment. It is one boolean rather than a comment because
  * a comment does not stop a deploy.
  */
-export const PARTNERS_ARE_PLACEHOLDER: boolean = true;
+export const PARTNERS_ARE_PLACEHOLDER: boolean = false;
 
 /**
  * What a partner is appointed to do. A company can be both, and several are:
@@ -95,12 +92,8 @@ export type Partner = {
 };
 
 /**
- * Placeholder entries.
- *
- * The companies, certificate numbers and contact details are invented, and the
- * domains are all under `example.com`, which is reserved and can never resolve
- * to a real business. Replace the array wholesale -- do not edit names in place
- * and leave a certificate number behind.
+ * The appointed partners. When a company leaves, remove its entry whole -- never
+ * reuse its certificate number for someone else.
  */
 export const partners: Partner[] = [
   /**
@@ -109,16 +102,15 @@ export const partners: Partner[] = [
    * Everything recorded here came from them. What is missing is missing on
    * purpose -- none of it is ours to assume:
    *
-   *   - roles          reseller, integrator, or both
    *   - coverage/town  which province they work, and from where
    *   - focus          one line on the work they do
    *
-   * Agents and certificate issued 14 October 2026.
+   * Roles, agents and certificate issued 14 October 2026.
    */
   {
     slug: "just-corporation",
     name: "Just Corporation",
-    roles: [],
+    roles: ["reseller", "integrator"],
     certificate: "A1K-2026-0113",
     certifiedSince: "2026-10",
     certifiedUntil: "2028-10",
@@ -158,7 +150,6 @@ export const partners: Partner[] = [
     certifiedSince: "2025-04",
     certifiedUntil: "2027-04",
     coverage: "Gauteng",
-    town: "Guateng",
     agents: ["vulnwatch", "sitewatch","contentdesk"],
     focus:
       "Application security and hosting work for institutions that build their own software.",

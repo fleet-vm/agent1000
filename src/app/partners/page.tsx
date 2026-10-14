@@ -22,11 +22,9 @@ export const metadata: Metadata = {
   title: "Certified resellers and integrators",
   description: DESCRIPTION,
   alternates: { canonical: "/partners" },
-  // While the register holds example entries, the page is kept out of the
-  // index. Invented companies described as certified are exactly the kind of
-  // claim that should never be searchable, and a placeholder that quietly
-  // ranks is worse than one nobody finds. Flipping PARTNERS_ARE_PLACEHOLDER
-  // lifts this and puts the page in the sitemap.
+  // If the register ever holds example entries again, the page is kept out of
+  // the index: invented companies described as certified should never be
+  // searchable. PARTNERS_ARE_PLACEHOLDER drives this and the sitemap entry.
   robots: PARTNERS_ARE_PLACEHOLDER ? { index: false, follow: true } : undefined,
   openGraph: {
     type: "website",
