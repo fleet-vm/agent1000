@@ -6,7 +6,6 @@ import { useSearchParams } from "next/navigation";
 import { agentMeta } from "@/data/agents";
 import { matchAgents } from "@/lib/match";
 import { Modal } from "@/components/ui/Modal";
-import { StatusBadge } from "@/components/ui/StatusBadge";
 import { TextField } from "@/components/ui/TextField";
 import {
   postTaskRequest,
@@ -118,12 +117,9 @@ export function RequestBody() {
                     href={`/agents/${agent.slug}`}
                     className="block rounded-lg border border-rule bg-surface px-4 py-3.5 transition-colors duration-150 hover:border-signal"
                   >
-                    <div className="flex items-baseline justify-between gap-4">
-                      <span className="text-card font-medium text-ink">
-                        {agent.name}
-                      </span>
-                      <StatusBadge status={agent.status} />
-                    </div>
+                    <span className="block text-card font-medium text-ink">
+                      {agent.name}
+                    </span>
                     <p className="mt-1.5 text-ui text-muted">{agent.summary}</p>
                     <p className="mt-2 text-meta text-muted">
                       {agentMeta(agent)}

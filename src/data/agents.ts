@@ -10,8 +10,9 @@
  *  2. No metrics. No findings counts, package counts, uptime figures or client
  *     numbers anywhere on the public site.
  *  3. A `development` agent must never read as though it is running. Every
- *     agent that is not yet built is written in the future tense, so the copy
- *     and the status badge cannot contradict each other.
+ *     agent that is not yet built is written in the future tense. Status is
+ *     not shown on the site, so the tense is the only signal a reader gets
+ *     and it has to be right.
  *
  * VulnWatch and ContentDesk are real and in production. The workflow agents --
  * leave, claims, submissions, budget, contracts, performance -- are built and

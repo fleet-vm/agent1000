@@ -16,7 +16,6 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { RequestDemo } from "@/components/agents/RequestDemo";
 import { AgentJsonLd } from "@/components/JsonLd";
-import { StatusBadge } from "@/components/ui/StatusBadge";
 import { OG_IMAGE } from "@/lib/site";
 
 export function generateStaticParams() {
@@ -33,8 +32,7 @@ export async function generateMetadata({
   const path = `/agents/${agent.slug}`;
   // The summary is already one plain-language line and already correctly
   // tensed -- an agent still in development is written in the future tense, so
-  // a search result can never claim it is running when the badge says it is
-  // not. Reusing it keeps the description and the page in step by construction.
+  // a search result can never claim it is running when it is not. Reusing it keeps the description and the page in step by construction.
   const description = `${agent.summary} ${CATEGORY_LABEL[agent.category]} · ${CADENCE_LABEL[agent.cadence]}.`;
 
   return {
@@ -88,10 +86,7 @@ export default async function AgentPage({ params }: PageProps<"/agents/[slug]">)
             All agents
           </Link>
 
-          <div className="mt-5 flex flex-wrap items-baseline gap-3">
-            <h1 className="font-display text-head font-semibold tracking-tight text-ink">{agent.name}</h1>
-            <StatusBadge status={agent.status} />
-          </div>
+          <h1 className="mt-5 font-display text-head font-semibold tracking-tight text-ink">{agent.name}</h1>
 
           <p className="mt-1 text-meta text-muted">
             {CATEGORY_LABEL[agent.category]} · {CADENCE_LABEL[agent.cadence]}

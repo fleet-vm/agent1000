@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
-import { StatusBadge, STATUS_LABEL } from "@/components/ui/StatusBadge";
 import {
   agents,
   getAgent,
@@ -18,7 +17,6 @@ import {
   type AgentCategory,
   type AgentCadence,
   type AgentChannel,
-  type AgentStatus,
 } from "@/data/agents";
 import { ROLE_LABEL, ROLE_NOTE, type PartnerRole } from "@/data/partners";
 import { OG_IMAGE } from "@/lib/site";
@@ -91,13 +89,6 @@ const TOC: { group: string; items: { id: string; label: string }[] }[] = [
     items: [{ id: "getting-started", label: "Your first task" }],
   },
 ];
-
-const STATUS_NOTE: Record<AgentStatus, string> = {
-  production: "Running in institutions today.",
-  pilot: "Running with a first institution, under close watch.",
-  available: "Built and ready to connect to your systems.",
-  development: "On the roadmap. Described in the future tense until it runs.",
-};
 
 const CHANNEL_NOTE: Record<AgentChannel, string> = {
   email:
@@ -424,7 +415,6 @@ function TocLinks() {
 /* ---------------------------------------------------------------------- page */
 
 export default function GuidePage() {
-  const statuses = Object.keys(STATUS_LABEL) as AgentStatus[];
   // Areas in catalogue order, skipping any with no agent in them yet.
   const categories = (Object.keys(CATEGORY_LABEL) as AgentCategory[]).filter((c) =>
     agents.some((a) => a.category === c),
@@ -496,11 +486,11 @@ export default function GuidePage() {
                   says what it connects to, how you reach it, and exactly what a
                   person approves.
                 </P>
-                <Table head={["Agent", "What it does", "Status"]}>
+                <Table head={["Agent", "What it does"]}>
                   {categories.flatMap((category) => [
                     <tr key={category} className="bg-paper">
                       <td
-                        colSpan={3}
+                        colSpan={2}
                         className="text-micro font-medium tracking-[0.06em] text-muted uppercase"
                       >
                         {CATEGORY_LABEL[category]}
@@ -517,22 +507,10 @@ export default function GuidePage() {
                         </Link>
                       </td>
                       <td className="text-muted-ink">{agent.summary}</td>
-                      <td>
-                        <StatusBadge status={agent.status} />
-                      </td>
                     </tr>
                     )),
                   ])}
                 </Table>
-                <H3>What the status means</H3>
-                <ul className="flex flex-col gap-2">
-                  {statuses.map((status) => (
-                    <li key={status} className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
-                      <StatusBadge status={status} />
-                      <span className="text-ui text-muted-ink">{STATUS_NOTE[status]}</span>
-                    </li>
-                  ))}
-                </ul>
                 <Note>
                   If the work you have in mind is not in the table, describe it on
                   the{" "}

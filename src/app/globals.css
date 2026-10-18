@@ -6,8 +6,9 @@
    One accent colour, and it does one job: it marks what you can act on. The
    green sits on the primary button, on links, on the eyebrow labels and on the
    phrase in the headline that carries the proposition -- and nowhere else.
-   The status tokens mark what state an agent is in. Nothing else on this site
-   is coloured.
+   The live, pilot and ready tokens colour the recorded threads: the approval
+   gate, the approval itself and the person's own turns. Nothing else on this
+   site is coloured.
 
    The ground is a soft grey with white surfaces on it, so cards, the product
    frame and the alternating bands read as objects on a desk rather than lines
@@ -34,9 +35,9 @@
   --color-accent: #4e814e; /* white text on it: 4.6:1 */
   --color-accent-soft: #e8efe8; /* tinted ground: pills, the active tab hover */
 
-  /* Status. One pairing per status, used identically everywhere it appears.
-     `development` gets no fill -- it is the only badge drawn as an outline, so
-     an agent that is not running can never read as though it were. */
+  /* Thread tokens. Once the agent status badges, which no longer appear;
+     kept because the recorded threads draw the gate, the approval and the
+     person's turns with them. */
   --color-live-fg: #3d6e3d;
   --color-live-bg: #e6efe6; /* 5.4:1 */
   --color-pilot-fg: #6b4a05;

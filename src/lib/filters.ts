@@ -14,9 +14,7 @@ import {
   type AgentCategory,
   type AgentChannel,
   type AgentInstitution,
-  type AgentStatus,
 } from "@/data/agents";
-import { STATUS_LABEL } from "@/components/ui/StatusBadge";
 
 /**
  * Filter state, and the pure functions over it.
@@ -31,7 +29,6 @@ export type Filters = {
   institutions: AgentInstitution[];
   categories: AgentCategory[];
   channels: AgentChannel[];
-  statuses: AgentStatus[];
   cadence: AgentCadence | "any";
   approval: AgentApproval | "any";
 };
@@ -41,14 +38,12 @@ export const EMPTY_FILTERS: Filters = {
   institutions: [],
   categories: [],
   channels: [],
-  statuses: [],
   cadence: "any",
   approval: "any",
 };
 
 const CATEGORY_VALUES = Object.keys(CATEGORY_LABEL) as AgentCategory[];
 const CHANNEL_VALUES = Object.keys(CHANNEL_LABEL) as AgentChannel[];
-const STATUS_VALUES = Object.keys(STATUS_LABEL) as AgentStatus[];
 
 function parseList<T extends string>(raw: string | null, allowed: T[]): T[] {
   if (!raw) return [];
@@ -64,7 +59,6 @@ export function parseFilters(sp: URLSearchParams): Filters {
     institutions: parseList(sp.get("inst"), INSTITUTION_VALUES),
     categories: parseList(sp.get("cat"), CATEGORY_VALUES),
     channels: parseList(sp.get("ch"), CHANNEL_VALUES),
-    statuses: parseList(sp.get("st"), STATUS_VALUES),
     cadence:
       cadence === "scheduled" || cadence === "on-request" ? cadence : "any",
     approval:
@@ -79,7 +73,6 @@ export function toSearchString(f: Filters): string {
   if (f.institutions.length) sp.set("inst", f.institutions.join(","));
   if (f.categories.length) sp.set("cat", f.categories.join(","));
   if (f.channels.length) sp.set("ch", f.channels.join(","));
-  if (f.statuses.length) sp.set("st", f.statuses.join(","));
   if (f.cadence !== "any") sp.set("cadence", f.cadence);
   if (f.approval !== "any") sp.set("approval", f.approval);
   return sp.toString();
@@ -94,7 +87,6 @@ type Group =
   | "institutions"
   | "categories"
   | "channels"
-  | "statuses"
   | "cadence"
   | "approval";
 
@@ -145,12 +137,6 @@ export function applyFilters(f: Filters, except?: Group): Agent[] {
       except !== "channels" &&
       f.channels.length &&
       !f.channels.some((c) => agent.channels.includes(c))
-    )
-      return false;
-    if (
-      except !== "statuses" &&
-      f.statuses.length &&
-      !f.statuses.includes(agent.status)
     )
       return false;
     if (
@@ -211,15 +197,6 @@ export function channelFacets(f: Filters): FacetOption<AgentChannel>[] {
     value,
     label: CHANNEL_LABEL[value],
     count: pool.filter((a) => a.channels.includes(value)).length,
-  }));
-}
-
-export function statusFacets(f: Filters): FacetOption<AgentStatus>[] {
-  const pool = applyFilters(f, "statuses");
-  return STATUS_VALUES.map((value) => ({
-    value,
-    label: STATUS_LABEL[value],
-    count: pool.filter((a) => a.status === value).length,
   }));
 }
 
@@ -294,16 +271,6 @@ export function activeChips(
       key: "approval",
       label: APPROVAL_LABEL[f.approval],
       clear: (cur) => ({ ...cur, approval: "any" }),
-    });
-  }
-  for (const value of f.statuses) {
-    chips.push({
-      key: `st:${value}`,
-      label: STATUS_LABEL[value],
-      clear: (cur) => ({
-        ...cur,
-        statuses: cur.statuses.filter((v) => v !== value),
-      }),
     });
   }
 

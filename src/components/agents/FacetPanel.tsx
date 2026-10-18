@@ -10,7 +10,6 @@ import {
   channelFacets,
   institutionFacetGroups,
   isDefault,
-  statusFacets,
   type FacetOption,
   type Filters,
 } from "@/lib/filters";
@@ -109,7 +108,7 @@ export function FacetPanel({
   onClear: () => void;
 }) {
   function toggle<
-    K extends "institutions" | "categories" | "channels" | "statuses",
+    K extends "institutions" | "categories" | "channels",
   >(
     key: K,
   ): (value: Filters[K][number], next: boolean) => void {
@@ -180,13 +179,6 @@ export function FacetPanel({
           onChange={(approval) => onChange({ ...filters, approval })}
         />
       </div>
-
-      <FacetGroup
-        label="Status"
-        options={statusFacets(filters)}
-        selected={filters.statuses}
-        onToggle={toggle("statuses")}
-      />
     </div>
   );
 }
