@@ -8,7 +8,7 @@ import { catalogueThreads } from "@/data/threads";
 import { OG_IMAGE } from "@/lib/site";
 
 const DESCRIPTION =
-  "Worked examples of Agent1000 agents doing real institutional tasks: patching a portal, publishing a statement, filing registry mail, assembling a monthly pack, watching the public sites. Every binding action waits for a named official.";
+  "Worked examples of Agent1000 agents doing real institutional tasks: booking sick leave, patching a portal, publishing a statement, filing registry mail, assembling a monthly pack, watching the public sites. Every binding action waits for a named official.";
 
 export const metadata: Metadata = {
   title: "Use cases",

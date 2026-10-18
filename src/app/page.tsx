@@ -26,10 +26,20 @@ import { officeThreads } from "@/data/threads";
  */
 
 /**
- * The catalogue grid on the front page. Six, so the grid is full; the badge
- * on each card says honestly which of them exist today.
+ * The catalogue grid on the front page. Eight, so the grid is full at two and
+ * four columns alike. Leave and claims lead, because they are the work every
+ * department recognises first.
  */
-const SHOWN = ["vulnwatch", "contentdesk", "recordsdesk", "reportpack", "sitewatch", "minutedesk"];
+const SHOWN = [
+  "leavedesk",
+  "claimsdesk",
+  "vulnwatch",
+  "contentdesk",
+  "recordsdesk",
+  "reportpack",
+  "sitewatch",
+  "minutedesk",
+];
 
 /** The kinds of institution the site is written for, as a quiet strip. */
 const AUDIENCE: AgentInstitution[] = [
@@ -74,14 +84,14 @@ export default function Home() {
         <div className="mx-auto w-full max-w-[1120px] px-6 pt-16 pb-12 sm:pt-24">
           <div className="mx-auto flex max-w-[800px] flex-col items-center text-center">
             <Link
-              href="/agents?st=production"
+              href="/guide#workflows"
               className="anim-rise inline-flex flex-wrap items-center justify-center gap-x-2 text-ui text-ink transition-colors duration-150 hover:text-signal"
             >
-              <span className="eyebrow hidden sm:inline">Live</span>
+              <span className="eyebrow hidden sm:inline">New</span>
               <span aria-hidden="true" className="hidden text-muted sm:inline">
                 ·
               </span>
-              VulnWatch and ContentDesk are in production
+              Leave and travel claims, checked before anyone signs
               <ArrowRight aria-hidden="true" strokeWidth={1.5} className="size-3.5" />
             </Link>
 
@@ -163,7 +173,7 @@ export default function Home() {
             </Link>
           </div>
 
-          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {shown.map((agent) => (
               <AgentCard key={agent.slug} agent={agent} />
             ))}
@@ -205,9 +215,9 @@ export default function Home() {
                 href="/use-cases"
                 className="font-medium text-signal transition-colors duration-150 hover:underline"
               >
-                Five more, one per agent in the catalogue
+                Six more from the catalogue
               </Link>
-              : patching a portal, publishing a statement, filing registry mail,
+              : booking sick leave, patching a portal, publishing a statement, filing registry mail,
               assembling a monthly pack, watching the public sites.
             </p>
           </div>

@@ -73,12 +73,13 @@ export type Thread = {
 
 export const officeThreads: Thread[] = [
   {
-    id: "people-desk",
-    name: "People Desk",
+    id: "leavedesk-desk",
+    slug: "leavedesk",
+    name: "LeaveDesk",
     icon: "people",
     tools: "Persal · Outlook · Teams",
     value:
-      "Check the balance, apply the leave policy, and hand the supervisor one decision to make.",
+      "Check the balance, apply the leave policy, and hand the line manager and HR one decision each.",
     title: "Process a leave request",
     takeaway: {
       title: "It works the system, not a spreadsheet about the system",
@@ -87,16 +88,16 @@ export const officeThreads: Thread[] = [
     },
     steps: [
       { type: "user", text: "Process the leave request from employee 4471, 5 days annual leave, 22 to 26 September.", time: "9:02 AM" },
-      { type: "agent", text: "I'll check the balance on Persal, validate it against leave policy, and route it to the supervisor before anything is recorded." },
+      { type: "agent", text: "I'll check the balance on Persal, validate it against leave policy, and route it to the line manager and HR before anything is recorded." },
       { type: "connect", system: "Persal" },
       { type: "work", took: "24s", trace: ["Opened the employee record on Persal", "Read the leave balance: 18 days", "Checked the dates against policy: no restricted period, no team-leave overlap"] },
       { type: "agent", text: "The balance covers it, five days of eighteen, and nothing in policy blocks these dates." },
-      { type: "gate", title: "Needs your approval", body: "Leave requires supervisor sign-off before it is captured.\n\nSending to M. Dlamini. Nothing touches Persal until they approve." },
-      { type: "approved", text: "Approved by M. Dlamini · 9:04 AM" },
+      { type: "gate", title: "Needs the line manager, then HR", body: "Leave needs the line manager's recommendation and HR's approval before it is captured.\n\nSending to M. Dlamini, then HR. Nothing touches Persal until both have signed." },
+      { type: "approved", text: "Recommended by M. Dlamini · 9:04 AM · Approved by HR, P. Naidoo · 9:31 AM" },
       { type: "work", took: "11s", trace: ["Captured the leave on Persal, ref LV-4471-0922", "Balance updated, 18 days to 13", "Emailed the employee and notified the team on Teams"] },
-      { type: "agent", text: "Captured and confirmed. The record shows M. Dlamini approved it, not me." },
+      { type: "agent", text: "Captured and confirmed. The record shows M. Dlamini and P. Naidoo signed it, not me." },
       { type: "user", text: "Do this for every leave request that comes in.", time: "9:05 AM" },
-      { type: "auto", title: "Process incoming leave requests", body: "On any new request: check the balance, validate policy, route to the supervisor, capture once approved. The supervisor step is never skipped." },
+      { type: "auto", title: "Process incoming leave requests", body: "On any new request: check the balance, validate policy, route to the line manager and HR, capture once both have signed. Neither step is ever skipped." },
     ],
   },
   {
@@ -194,6 +195,41 @@ export const officeThreads: Thread[] = [
 /* -------------------------------------------------------------- catalogue */
 
 export const catalogueThreads: Thread[] = [
+  {
+    id: "leavedesk",
+    slug: "leavedesk",
+    name: "LeaveDesk",
+    icon: "people",
+    tools: "Persal · Document management system · Email",
+    value:
+      "Book leave in one message. It is checked against the determination, then signed by you, your line manager and HR.",
+    title: "Book sick leave",
+    takeaway: {
+      title: "The rules are checked before anyone is asked",
+      body:
+        "The certificate was read against the dates, the balance against Persal and the eight-week rule against the record before the line manager saw anything. They get one decision to make, not a form to audit. Both signatures the determination asks for were collected, and the agent gave neither.",
+    },
+    steps: [
+      { type: "user", text: "Book sick leave for me, 13 to 15 October. My medical certificate is attached.", time: "7:40 AM" },
+      { type: "agent", text: "I'll check it against the leave determination and your balance on Persal, read the certificate, and send it to your line manager. Nothing is captured until your line manager and HR have both signed." },
+      { type: "connect", system: "Persal" },
+      { type: "work", took: "18s", trace: ["Read the sick-leave balance on Persal: 26 days left in the cycle", "Counted 3 working days, excluding weekends and public holidays", "Read the certificate: issued 13 October, covers 13 to 15 October, name matches", "Checked the eight-week rule: first sick absence in the window"] },
+      { type: "card", title: "Leave application SL-2026-0312", sections: [
+        { heading: "Leave", lines: ["Sick leave · 3 working days", "Monday 13 to Wednesday 15 October"] },
+        { heading: "Balance", lines: ["26 days before, 23 after"] },
+        { heading: "Checks", lines: ["Certificate covers the first day of absence", "No overlapping leave", "All checks passed"] },
+        { heading: "Route", lines: ["Line manager: M. Dlamini", "Then the HR pool"] },
+      ] },
+      { type: "gate", title: "Ready for your signature", body: "SL-2026-0312 · Sick leave, 13 to 15 October.\n\nSigning submits it to M. Dlamini, then HR. Nothing touches Persal until both have signed." },
+      { type: "approved", text: "Signed and submitted by you · 7:42 AM" },
+      { type: "gate", title: "Needs the line manager, then HR", body: "With M. Dlamini for a recommendation, then an HR practitioner approves for the head of department.\n\nEach sees the certificate and the checks, and signs their own decision." },
+      { type: "approved", text: "Recommended by M. Dlamini · 9:15 AM · Approved by HR, P. Naidoo · 11:02 AM" },
+      { type: "work", took: "9s", trace: ["Captured the leave on Persal against the sick-leave sub-category", "Balance updated, 26 days to 23", "Saved the application pack and the signed Z1 to your file"] },
+      { type: "agent", text: "Captured. Your balance is 23 days, and the Z1 is on your file, signed by you, your line manager and HR. Get well soon." },
+      { type: "user", text: "Do this whenever I book leave.", time: "11:05 AM" },
+      { type: "auto", title: "Book leave on request", body: "On any request: check it against the determination and the balance, read the documents, route to the line manager and HR, capture on Persal once both have signed. Neither signature is ever skipped." },
+    ],
+  },
   {
     id: "vulnwatch",
     slug: "vulnwatch",
