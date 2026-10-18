@@ -142,6 +142,27 @@ export const partners: Partner[] = [
     contactName: "Itumeleng Mokaba",
     phone: "0815839649",
   },
+  /**
+   * Supplied 18 October 2026 as an email and a phone number, and certified the
+   * same day. Recorded as a reseller, since every listed partner holds a
+   * reseller agreement. Website, contact and Pretoria supplied the same day;
+   * focus is still to come from them.
+   */
+  {
+    slug: "nunationdigital",
+    name: "NuNationDigital",
+    roles: ["reseller"],
+    certificate: "A1K-2026-0115",
+    certifiedSince: "2026-10",
+    certifiedUntil: "2028-10",
+    coverage: "Gauteng",
+    town: "Pretoria",
+    agents: ["contentdesk", "vulnwatch"],
+    website: "https://nunationdigital.co.za",
+    email: "neo@nunationza.co.za",
+    contactName: "Neo Mosala",
+    phone: "0813861105",
+  },
   {
     slug: "Africanetwork",
     name: "Africanetwork ",
