@@ -22,7 +22,7 @@ import { ROLE_LABEL, ROLE_NOTE, type PartnerRole } from "@/data/partners";
 import { OG_IMAGE } from "@/lib/site";
 
 const DESCRIPTION =
-  "How Agent1000 works in a South African public institution: leave, travel claims, submissions and the other workflows it takes on, what can start a task, who signs off, and how to check a partner before you let one in.";
+  "How Agent1000 works in a South African public institution: leave, travel claims, the budget, contracts and the other workflows it takes on, what can start a task, who signs off, and how to check a partner before you let one in.";
 
 export const metadata: Metadata = {
   title: "Guide",
@@ -43,7 +43,7 @@ export const metadata: Metadata = {
  * manager, a CFO's office, a registry, a bid committee secretary.
  *
  * Its examples are the administrative workflows the public service runs --
- * leave, travel claims, submissions, contract instructions, the monthly budget
+ * leave, travel claims, contract instructions, the monthly budget
  * report -- written in the forms and systems officials already know. The
  * catalogue tables (agents, channels, approvals, cadence) are read from
  * `src/data/agents.ts`, so they cannot drift from the agent pages. The same
@@ -183,34 +183,6 @@ const WORKFLOWS: {
       },
     ],
   },
-  {
-    area: "Executive office",
-    items: [
-      {
-        name: "Submission to the Minister or DG",
-        slug: "submissiondesk",
-        agent: "Routes the submission to its reviewers and approvers, counts the due date in working days, and chases whoever holds it.",
-        signs: "Each reviewer and approver in the chain, in order. The signed PDF is the record.",
-      },
-      {
-        name: "Parliamentary question or memo",
-        slug: "submissiondesk",
-        agent: "Assigns it, keeps the reply moving through review, and tells everyone when it is answered.",
-        signs: "The reviewers and approvers named for that question.",
-      },
-    ],
-  },
-  {
-    area: "Planning and reporting",
-    items: [
-      {
-        name: "Quarterly performance report",
-        slug: "plandesk",
-        agent: "Collects each milestone\u2019s status and evidence from the programmes, and flags what is missing before the deadline.",
-        signs: "Programme managers, then the strategy unit.",
-      },
-    ],
-  },
 ];
 
 /** What can start an agent's work without someone asking. */
@@ -227,7 +199,7 @@ const AUTOMATIONS: { name: string; how: string; examples: string[] }[] = [
     name: "Deadlines",
     how: "Counts due dates in working days, skipping weekends and public holidays, and acts when one is close or passed.",
     examples: [
-      "Chase whoever is holding a submission past its due date",
+      "Chase whoever is holding a leave application past its two working days",
       "Flag a contract stage that has run past its turnaround",
     ],
   },
@@ -461,7 +433,7 @@ export default function GuidePage() {
                   departments, public entities, municipalities, universities,
                   science councils and SETAs. It takes the administrative work every
                   institution runs on &mdash; leave applications, travel claims,
-                  submissions to the DG, contract instructions, the monthly
+                  budget certificates, contract instructions, the monthly
                   budget report &mdash; and does it inside the systems the
                   institution already runs, from Persal to the registry mailbox.
                 </P>
@@ -476,8 +448,8 @@ export default function GuidePage() {
 
               <Section id="agents" title="Agents">
                 <P>
-                  Each agent takes one workflow &mdash; leave, claims, submissions,
-                  the budget, contracts, performance reporting &mdash; or one
+                  Each agent takes one workflow &mdash; leave, claims, the budget,
+                  contracts &mdash; or one
                   standing job such as patching or publishing, and is named for
                   it. Its page in the{" "}
                   <Link href="/agents" className="text-signal hover:underline">
@@ -552,7 +524,7 @@ export default function GuidePage() {
                 </P>
                 <P>
                   Keeping the work apart keeps the record readable. A leave
-                  application, a travel claim and a submission to the DG each
+                  application, a travel claim and a budget certificate each
                   have their own thread, so when someone later asks how a claim
                   came to be paid, the trip, the receipts, Finance&rsquo;s
                   findings and the supervisor&rsquo;s approval are in one place.
@@ -567,8 +539,8 @@ export default function GuidePage() {
                   conversations, and the documents and attachments it handled.
                   What it learns in one thread helps in the next &mdash; which
                   supervisor signs for which unit, the receipts Finance has
-                  queried before, the format your DG expects a submission in
-                  &mdash; and it can look back at earlier threads when it needs
+                  queried before, the clauses legal services always asks
+                  for &mdash; and it can look back at earlier threads when it needs
                   more context.
                 </P>
                 <P>
@@ -676,7 +648,7 @@ export default function GuidePage() {
                 <H3>What an ask looks like</H3>
                 <Ask>Process the leave request from employee 4471, 5 days annual leave, 22 to 26 September.</Ask>
                 <Ask>Start my travel claim for the Polokwane trip.</Ask>
-                <Ask>Where is the submission on the bursary policy, and who is holding it?</Ask>
+                <Ask>Where is the contract instruction for the bursary partnership, and who is holding it?</Ask>
                 <P>
                   You can watch a leave request run, approval gate and all, on the{" "}
                   <Link href="/" className="text-signal hover:underline">
@@ -812,7 +784,7 @@ export default function GuidePage() {
                 <P>
                   A binding action is anything that commits the institution:
                   capturing leave on Persal, verifying or paying a claim,
-                  approving a submission, issuing a budget certificate, sending
+                  issuing a budget certificate, signing a contract, sending
                   a letter, publishing a page. The agent prepares it; a named
                   official decides. That order is not configurable.
                 </P>

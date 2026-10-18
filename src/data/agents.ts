@@ -15,8 +15,7 @@
  *     and it has to be right.
  *
  * VulnWatch and ContentDesk are real and in production. The workflow agents --
- * leave, claims, submissions, budget, contracts, performance -- are built and
- * available to deploy. Everything else is the roadmap, labelled honestly.
+ * leave, claims, budget, contracts -- are built and available to deploy. Everything else is the roadmap, labelled honestly.
  */
 
 export type AgentCategory =
@@ -313,29 +312,6 @@ export const agents: Agent[] = [
       "The claimant signs, Finance verifies and the supervisor approves before anything is captured for payment.",
   },
   {
-    slug: "submissiondesk",
-    name: "SubmissionDesk",
-    category: "documents",
-    summary:
-      "Routes submissions, memos and parliamentary questions through their reviewers and approvers, counts due dates in working days, and chases whoever holds them.",
-    // Submissions to a Minister, an MEC or an accounting officer; councils run
-    // their own item process.
-    institutions: [
-      "national-department",
-      "provincial-department",
-      "national-entity",
-      "provincial-entity",
-      "constitutional-institution",
-    ],
-    channels: ["email", "console"],
-    cadence: "on-request",
-    approval: "per-action",
-    status: "available",
-    connectsTo: ["Document management system", "Shared mailboxes"],
-    approves:
-      "Every reviewer and approver signs in turn; the agent routes and reminds, and never signs.",
-  },
-  {
     slug: "budgetdesk",
     name: "BudgetDesk",
     category: "finance",
@@ -364,21 +340,6 @@ export const agents: Agent[] = [
     connectsTo: ["Document management system", "Legal services mailbox"],
     approves:
       "Legal services reviews every draft, and only the delegated official signs the contract.",
-  },
-  {
-    slug: "plandesk",
-    name: "PlanDesk",
-    category: "data",
-    summary:
-      "Collects each programme's quarterly milestones and evidence against the annual performance plan, and flags what is missing before the reporting deadline.",
-    institutions: EVERY_INSTITUTION,
-    channels: ["email", "console"],
-    cadence: "scheduled",
-    approval: "standing",
-    status: "available",
-    connectsTo: ["Performance plans", "Evidence documents"],
-    approves:
-      "Programme managers confirm their own milestones; the strategy unit signs off the report.",
   },
   {
     slug: "tendercheck",

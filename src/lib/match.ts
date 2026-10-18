@@ -89,11 +89,6 @@ const KEYWORDS: Record<AgentCategory, string[]> = {
     "meeting",
     "archive",
     "scan",
-    "submission",
-    "submissions",
-    "memo",
-    "memos",
-    "parliamentary",
   ],
   data: [
     "report",
@@ -107,9 +102,6 @@ const KEYWORDS: Record<AgentCategory, string[]> = {
     "monthly",
     "quarterly",
     "figures",
-    "performance",
-    "milestone",
-    "milestones",
   ],
   servicedesk: [
     "helpdesk",
