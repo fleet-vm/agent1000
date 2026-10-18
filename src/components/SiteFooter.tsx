@@ -11,6 +11,7 @@ const COLUMNS = [
     links: [
       { href: "/agents", label: "Agents" },
       { href: "/use-cases", label: "Use cases" },
+      { href: "/guide", label: "Guide" },
       { href: "/request", label: "Request a demo" },
     ],
   },

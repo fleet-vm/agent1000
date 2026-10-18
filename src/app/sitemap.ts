@@ -45,6 +45,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.8,
     },
+    {
+      url: url("/guide"),
+      lastModified,
+      changeFrequency: "monthly",
+      priority: 0.8,
+    },
     ...agents.map((agent) => ({
       url: url(`/agents/${agent.slug}`),
       lastModified,

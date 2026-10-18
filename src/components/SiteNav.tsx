@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn";
 
 /**
  * The tabs. One row, in the order a first-time reader needs them: what the
- * agents are, what they look like working, who resells and certifies them,
+ * agents are, what they look like working, how the whole thing works, who resells and certifies them,
  * and what we have written.
  *
  * The active tab is underlined in ink, not coloured -- the accent green is
@@ -20,6 +20,7 @@ import { cn } from "@/lib/cn";
 const TABS = [
   { href: "/agents", label: "Agents" },
   { href: "/use-cases", label: "Use cases" },
+  { href: "/guide", label: "Guide" },
   { href: "/partners", label: "Partners" },
   { href: "/resellers", label: "Resellers" },
   { href: "/blog", label: "Blog" },
