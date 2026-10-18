@@ -5,14 +5,17 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { StatusBadge, STATUS_LABEL } from "@/components/ui/StatusBadge";
 import {
   agents,
+  getAgent,
   APPROVAL_LABEL,
   CADENCE_LABEL,
+  CATEGORY_LABEL,
   CHANNEL_LABEL,
   INSTITUTION_LABEL,
   INSTITUTION_NOTE,
   INSTITUTION_TIERS,
   type Agent,
   type AgentApproval,
+  type AgentCategory,
   type AgentCadence,
   type AgentChannel,
   type AgentStatus,
@@ -21,7 +24,7 @@ import { ROLE_LABEL, ROLE_NOTE, type PartnerRole } from "@/data/partners";
 import { OG_IMAGE } from "@/lib/site";
 
 const DESCRIPTION =
-  "How Agent1000 works in a South African public institution: the agents, how a task runs, the systems they connect to, who approves what, and how to check a partner before you let one in.";
+  "How Agent1000 works in a South African public institution: leave, travel claims, submissions and the other workflows it takes on, what can start a task, who signs off, and how to check a partner before you let one in.";
 
 export const metadata: Metadata = {
   title: "Guide",
@@ -41,11 +44,12 @@ export const metadata: Metadata = {
  * official who has to understand it before they can defend it -- an IT
  * manager, a CFO's office, a registry, a bid committee secretary.
  *
- * It describes only what the rest of the site already says. Every agent list,
- * channel, connection and status on it is read from `src/data/agents.ts`, so
- * the guide cannot claim an agent does something its catalogue page does not,
- * and an agent added to the catalogue appears here without anyone editing
- * prose. The same content rules apply: no client named, no metrics, and an
+ * Its examples are the administrative workflows the public service runs --
+ * leave, travel claims, submissions, contract instructions, the monthly budget
+ * report -- written in the forms and systems officials already know. The
+ * catalogue tables (agents, channels, approvals, cadence) are read from
+ * `src/data/agents.ts`, so they cannot drift from the agent pages. The same
+ * content rules apply: no client named, no metrics, and an
  * agent `in development` is never written as though it runs.
  */
 
@@ -55,9 +59,10 @@ const TOC: { group: string; items: { id: string; label: string }[] }[] = [
     items: [
       { id: "overview", label: "What Agent1000 is" },
       { id: "agents", label: "Agents" },
+      { id: "workflows", label: "Workflows" },
       { id: "how-a-task-runs", label: "How a task runs" },
       { id: "channels", label: "Channels" },
-      { id: "connections", label: "Connections" },
+      { id: "automations", label: "Automations" },
       { id: "approvals", label: "Approvals" },
       { id: "standing-work", label: "Standing work" },
     ],
@@ -121,16 +126,158 @@ function agentsWhere(test: (agent: Agent) => boolean) {
   return agents.filter(test);
 }
 
-/** Every system the catalogue connects to, with the agents that use it. */
-function connections() {
-  const map = new Map<string, Agent[]>();
-  for (const agent of agents) {
-    for (const system of agent.connectsTo) {
-      map.set(system, [...(map.get(system) ?? []), agent]);
-    }
-  }
-  return [...map.entries()].sort(([a], [b]) => a.localeCompare(b, "en-ZA"));
-}
+/**
+ * The administrative workflows a public institution runs every week, with the
+ * agent's part and the sign-off chain as the public service already has it.
+ * Written in the terms of the forms and systems officials use -- Persal, BAS,
+ * the VA26A, the Z1 -- and never naming the institution they were built with.
+ */
+const WORKFLOWS: {
+  area: string;
+  items: { name: string; slug?: string; agent: string; signs: string }[];
+}[] = [
+  {
+    area: "Human resources",
+    items: [
+      {
+        name: "Leave application",
+        slug: "leavedesk",
+        agent: "Checks the application against the leave determination and the balance on Persal, asks for the missing certificate, and routes it.",
+        signs: "Line manager, then an HR practitioner for the head of department. Captured on Persal only after both.",
+      },
+      {
+        name: "Profile change request",
+        agent: "Takes the change and its evidence, and sends it to the right reviewer for that field.",
+        signs: "The line manager or HR, depending on the field.",
+      },
+    ],
+  },
+  {
+    area: "Finance",
+    items: [
+      {
+        name: "Travel claim",
+        slug: "claimsdesk",
+        agent: "Builds the claim from the approved VA26A trip, applies the rates in force, light-checks each receipt, and pre-reviews it for Finance.",
+        signs: "The claimant signs, Finance verifies, the supervisor approves. Then Persal capture and the BAS form.",
+      },
+      {
+        name: "Kilometre claim",
+        slug: "claimsdesk",
+        agent: "Checks the month\u2019s trip log against the map estimate and flags private travel.",
+        signs: "The claimant signs, Finance verifies, the supervisor approves.",
+      },
+      {
+        name: "Budget confirmation certificate",
+        slug: "budgetdesk",
+        agent: "Derives the segment codes and checks the available balance before the request goes anywhere.",
+        signs: "Responsibility manager, then the budget office, then the state accountant issues it.",
+      },
+      {
+        name: "Monthly budget vs spending",
+        slug: "budgetdesk",
+        agent: "Loads the month\u2019s expenditure extract, raises the exceptions, and asks each programme manager for their variance reasons.",
+        signs: "Programme managers explain their lines; the responsible manager signs off the report.",
+      },
+    ],
+  },
+  {
+    area: "Legal and contracts",
+    items: [
+      {
+        name: "Contract drafting instruction",
+        slug: "contractdesk",
+        agent: "Checks the instruction is complete and the signatory sits within the delegation of authority, and tracks each stage against its turnaround.",
+        signs: "Legal services manager, then the head of legal services. Signed by the delegated official.",
+      },
+    ],
+  },
+  {
+    area: "Executive office",
+    items: [
+      {
+        name: "Submission to the Minister or DG",
+        slug: "submissiondesk",
+        agent: "Routes the submission to its reviewers and approvers, counts the due date in working days, and chases whoever holds it.",
+        signs: "Each reviewer and approver in the chain, in order. The signed PDF is the record.",
+      },
+      {
+        name: "Parliamentary question or memo",
+        slug: "submissiondesk",
+        agent: "Assigns it, keeps the reply moving through review, and tells everyone when it is answered.",
+        signs: "The reviewers and approvers named for that question.",
+      },
+    ],
+  },
+  {
+    area: "Planning and reporting",
+    items: [
+      {
+        name: "Quarterly performance report",
+        slug: "plandesk",
+        agent: "Collects each milestone\u2019s status and evidence from the programmes, and flags what is missing before the deadline.",
+        signs: "Programme managers, then the strategy unit.",
+      },
+    ],
+  },
+];
+
+/** What can start an agent's work without someone asking. */
+const AUTOMATIONS: { name: string; how: string; examples: string[] }[] = [
+  {
+    name: "Schedule",
+    how: "Runs at times you choose: every weekday morning, every Monday, the first working day of the month.",
+    examples: [
+      "Remind claimants of approved trips with no claim, before the 30-day deadline",
+      "Load the month\u2019s expenditure extract and start the budget report",
+    ],
+  },
+  {
+    name: "Deadlines",
+    how: "Counts due dates in working days, skipping weekends and public holidays, and acts when one is close or passed.",
+    examples: [
+      "Chase whoever is holding a submission past its due date",
+      "Flag a contract stage that has run past its turnaround",
+    ],
+  },
+  {
+    name: "Email",
+    how: "Runs when mail arrives in a mailbox the agent watches, such as an HR, finance or registry mailbox.",
+    examples: [
+      "A leave application with the medical certificate attached",
+      "Receipts forwarded for a travel claim",
+    ],
+  },
+  {
+    name: "Email replies",
+    how: "Reply to the agent\u2019s own emails to answer a query, add a missing document or ask a follow-up.",
+    examples: [
+      "Send the receipt Finance asked for in a rework query",
+      "Answer a line manager\u2019s question on a leave application",
+    ],
+  },
+  {
+    name: "WhatsApp",
+    how: "Talk to an agent\u2019s threads from a phone: ask, check what is waiting, and send a document from where you are.",
+    examples: ["Check a leave balance", "Photograph a receipt for a claim"],
+  },
+  {
+    name: "Web console",
+    how: "Start a task, and see what the agent has prepared and what is waiting on whom.",
+    examples: [
+      "HR takes the next application from the pool",
+      "Finance opens the verification queue with the pre-review findings",
+    ],
+  },
+  {
+    name: "Status changes",
+    how: "Runs when a request moves on: approved, sent back for rework, or captured.",
+    examples: [
+      "Tell the applicant the moment leave is captured on Persal",
+      "Send an approved claim to the payment queue",
+    ],
+  },
+];
 
 /* ----------------------------------------------------------- building blocks */
 
@@ -183,6 +330,25 @@ function Ask({ children }: { children: React.ReactNode }) {
     <blockquote className="border-l-2 border-signal pl-4 text-body text-ink italic">
       &ldquo;{children}&rdquo;
     </blockquote>
+  );
+}
+
+/** A numbered sequence: the order is part of what is being said. */
+function Steps({ steps }: { steps: { title: string; body: React.ReactNode }[] }) {
+  return (
+    <ol className="flex flex-col gap-4">
+      {steps.map((step, i) => (
+        <li key={step.title} className="flex gap-4">
+          <span className="tabular mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-soft text-meta font-medium text-signal">
+            {i + 1}
+          </span>
+          <span>
+            <span className="text-ui font-semibold text-ink">{step.title}</span>
+            <span className="mt-0.5 block text-ui text-muted-ink">{step.body}</span>
+          </span>
+        </li>
+      ))}
+    </ol>
   );
 }
 
@@ -259,6 +425,10 @@ function TocLinks() {
 
 export default function GuidePage() {
   const statuses = Object.keys(STATUS_LABEL) as AgentStatus[];
+  // Areas in catalogue order, skipping any with no agent in them yet.
+  const categories = (Object.keys(CATEGORY_LABEL) as AgentCategory[]).filter((c) =>
+    agents.some((a) => a.category === c),
+  );
   const channels = Object.keys(CHANNEL_LABEL) as AgentChannel[];
   const approvals = Object.keys(APPROVAL_LABEL) as AgentApproval[];
   const cadences = Object.keys(CADENCE_LABEL) as AgentCadence[];
@@ -299,10 +469,11 @@ export default function GuidePage() {
                 <P>
                   Agent1000 is an AI workforce for national and provincial
                   departments, public entities, municipalities, universities,
-                  science councils and SETAs. Each agent takes one kind of
-                  repetitive work &mdash; patching, publishing, filing, reporting,
-                  watching the public sites &mdash; and does it inside the systems
-                  the institution already runs.
+                  science councils and SETAs. It takes the administrative work every
+                  institution runs on &mdash; leave applications, travel claims,
+                  submissions to the DG, contract instructions, the monthly
+                  budget report &mdash; and does it inside the systems the
+                  institution already runs, from Persal to the registry mailbox.
                 </P>
                 <P>
                   What makes it usable in the public sector is where it stops.
@@ -315,7 +486,10 @@ export default function GuidePage() {
 
               <Section id="agents" title="Agents">
                 <P>
-                  Each agent does one job and is named for it. Its page in the{" "}
+                  Each agent takes one workflow &mdash; leave, claims, submissions,
+                  the budget, contracts, performance reporting &mdash; or one
+                  standing job such as patching or publishing, and is named for
+                  it. Its page in the{" "}
                   <Link href="/agents" className="text-signal hover:underline">
                     catalogue
                   </Link>{" "}
@@ -323,7 +497,16 @@ export default function GuidePage() {
                   person approves.
                 </P>
                 <Table head={["Agent", "What it does", "Status"]}>
-                  {agents.map((agent) => (
+                  {categories.flatMap((category) => [
+                    <tr key={category} className="bg-paper">
+                      <td
+                        colSpan={3}
+                        className="text-micro font-medium tracking-[0.06em] text-muted uppercase"
+                      >
+                        {CATEGORY_LABEL[category]}
+                      </td>
+                    </tr>,
+                    ...agentsWhere((a) => a.category === category).map((agent) => (
                     <tr key={agent.slug}>
                       <td className="font-medium whitespace-nowrap">
                         <Link
@@ -338,7 +521,8 @@ export default function GuidePage() {
                         <StatusBadge status={agent.status} />
                       </td>
                     </tr>
-                  ))}
+                    )),
+                  ])}
                 </Table>
                 <H3>What the status means</H3>
                 <ul className="flex flex-col gap-2">
@@ -358,19 +542,148 @@ export default function GuidePage() {
                   . It shows which agent comes closest, and we would rather hear
                   about the gap than have you force the work into the wrong agent.
                 </Note>
+
+                <H3>Setting up an agent</H3>
+                <P>
+                  An agent is set up for your institution, not downloaded. Before
+                  it does any work, three things are settled with you:
+                </P>
+                <Steps
+                  steps={[
+                    {
+                      title: "The work",
+                      body: "Which workflow it takes on, and on what rules: the leave determination, the travel rates and limits in force, the turnaround for each stage.",
+                    },
+                    {
+                      title: "The approvers",
+                      body: "The chain as your institution runs it: line manager and HR for leave; Finance and the supervisor for claims; the delegated official for a contract. The agent sends every binding action to them, and to no one else.",
+                    },
+                    {
+                      title: "The access",
+                      body: "Its own account in each system it needs \u2014 Persal, the document store, the mailbox \u2014 with the permissions that job requires and nothing more.",
+                    },
+                  ]}
+                />
+
+                <H3>Threads</H3>
+                <P>
+                  Each piece of work is a thread: one conversation that holds the
+                  request, what the agent did, what it is waiting for and who it
+                  is waiting on. Start a new thread for each task rather than
+                  running unrelated work through one long conversation.
+                </P>
+                <P>
+                  Keeping the work apart keeps the record readable. A leave
+                  application, a travel claim and a submission to the DG each
+                  have their own thread, so when someone later asks how a claim
+                  came to be paid, the trip, the receipts, Finance&rsquo;s
+                  findings and the supervisor&rsquo;s approval are in one place.
+                  A claim sent back for rework stays in the same thread, under
+                  the same reference, so the second round can be read against
+                  the first.
+                </P>
+
+                <H3>Memory</H3>
+                <P>
+                  An agent learns from its work across all of its threads: the
+                  conversations, and the documents and attachments it handled.
+                  What it learns in one thread helps in the next &mdash; which
+                  supervisor signs for which unit, the receipts Finance has
+                  queried before, the format your DG expects a submission in
+                  &mdash; and it can look back at earlier threads when it needs
+                  more context.
+                </P>
+                <P>
+                  Memory builds in the background, so there is nothing to manage
+                  day to day. It stays with the agent it belongs to; one
+                  agent&rsquo;s memory is not shared with another. And it never
+                  stands in for an approval: an agent that has seen a
+                  hundred clean claims from the same official still sends the
+                  hundred-and-first to Finance.
+                </P>
+
+                <H3>Sharing an agent</H3>
+                <P>
+                  An agent starts with the officials named when it is set up, and
+                  more can be added as the work needs them. Everyone working
+                  with an agent sees its threads, so a colleague can pick up a
+                  task where someone else left it, and a manager can see what is
+                  waiting and on whom.
+                </P>
+                <P>
+                  That is how the work is already split. A capturer can prepare
+                  a claim for an official who then signs it themselves. A
+                  supervisor going on leave can delegate their approvals for a
+                  week; the delegate signs &ldquo;on behalf of&rdquo;, and the
+                  record says so.
+                </P>
+                <P>
+                  Sharing an agent does not share its approvals. Only the
+                  officials named as approvers can sign off its work, and every
+                  approval is still recorded against the person who gave it.
+                </P>
+
+                <Note>
+                  Think of each agent as a boundary for access. It does one job,
+                  with one account and one set of permissions. Work that needs
+                  different access, a different approver or a different level of
+                  sensitivity belongs to a different agent, not a wider one.
+                </Note>
+              </Section>
+
+              <Section id="workflows" title="Workflows">
+                <P>
+                  These are the workflows an institution runs every week, and
+                  where an agent fits in each. In every one, the agent does the
+                  checking, the routing and the chasing. The signatures stay
+                  with the officials who hold them today.
+                </P>
+                <Table head={["Workflow", "What the agent does", "Who signs off"]}>
+                  {WORKFLOWS.flatMap((group) => [
+                    <tr key={group.area} className="bg-paper">
+                      <td
+                        colSpan={3}
+                        className="text-micro font-medium tracking-[0.06em] text-muted uppercase"
+                      >
+                        {group.area}
+                      </td>
+                    </tr>,
+                    ...group.items.map((item) => (
+                      <tr key={item.name}>
+                        <td>
+                          <span className="block font-medium text-ink">{item.name}</span>
+                          <AgentLinks
+                            list={[item.slug].flatMap((slug) => {
+                              const agent = slug ? getAgent(slug) : undefined;
+                              return agent ? [agent] : [];
+                            })}
+                          />
+                        </td>
+                        <td className="text-muted-ink">{item.agent}</td>
+                        <td className="text-muted-ink">{item.signs}</td>
+                      </tr>
+                    )),
+                  ])}
+                </Table>
+                <Note>
+                  An agent applies your rules; it does not decide them. Rates,
+                  limits, turnaround times and delegation thresholds are set by
+                  your institution, and when one changes the agent works to the
+                  new one from the date it takes effect.
+                </Note>
               </Section>
 
               <Section id="how-a-task-runs" title="How a task runs">
                 <P>Every task follows the same four steps, in the same order.</P>
-                <ol className="flex flex-col gap-4">
-                  {[
+                <Steps
+                  steps={[
                     {
                       title: "Ask",
                       body: "Say what you need done, in the words you would use with a colleague. No forms, no scripting, no new system to learn.",
                     },
                     {
                       title: "Connect",
-                      body: "The agent works inside the systems the institution already runs: the mailbox, the CMS, the document store, the code repositories.",
+                      body: "The agent works inside the systems the institution already runs: Persal, the mailbox, the document store, the finance system.",
                     },
                     {
                       title: "Approve",
@@ -380,26 +693,16 @@ export default function GuidePage() {
                       title: "Repeat",
                       body: "Say “do this every Monday” and the one-off becomes standing work. The approval step comes with it.",
                     },
-                  ].map((step, i) => (
-                    <li key={step.title} className="flex gap-4">
-                      <span className="tabular mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-soft text-meta font-medium text-signal">
-                        {i + 1}
-                      </span>
-                      <span>
-                        <span className="text-ui font-semibold text-ink">{step.title}</span>
-                        <span className="mt-0.5 block text-ui text-muted-ink">{step.body}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ol>
+                  ]}
+                />
                 <H3>What an ask looks like</H3>
-                <Ask>What needs patching on the citizen portal this week?</Ask>
-                <Ask>Publish the media statement on the new bursary round.</Ask>
-                <Ask>File what came into the registry mailbox this morning.</Ask>
+                <Ask>Process the leave request from employee 4471, 5 days annual leave, 22 to 26 September.</Ask>
+                <Ask>Start my travel claim for the Polokwane trip.</Ask>
+                <Ask>Where is the submission on the bursary policy, and who is holding it?</Ask>
                 <P>
-                  You can watch each of these run, approval gate and all, on{" "}
-                  <Link href="/use-cases" className="text-signal hover:underline">
-                    Use cases
+                  You can watch a leave request run, approval gate and all, on the{" "}
+                  <Link href="/" className="text-signal hover:underline">
+                    front page
                   </Link>
                   .
                 </P>
@@ -425,29 +728,35 @@ export default function GuidePage() {
                 </Table>
               </Section>
 
-              <Section id="connections" title="Connections">
+              <Section id="automations" title="Automations">
                 <P>
-                  An agent does not bring a new system with it. It is connected to
-                  the ones you already run &mdash; with its own account, under your
-                  change control &mdash; and works there.
+                  An automation is a task that starts on its own: at a set time,
+                  or when something arrives or changes. You set one up by saying
+                  it in the thread, in plain language.
                 </P>
-                <Table head={["System", "Used by"]}>
-                  {connections().map(([system, list]) => (
-                    <tr key={system}>
-                      <td className="font-medium text-ink">{system}</td>
+                <Ask>Remind me a week before any claim deadline.</Ask>
+                <H3>Types of automations</H3>
+                <Table head={["Automation", "How it works", "For example"]}>
+                  {AUTOMATIONS.map((automation) => (
+                    <tr key={automation.name}>
+                      <td className="font-medium whitespace-nowrap text-ink">{automation.name}</td>
+                      <td className="text-muted-ink">{automation.how}</td>
                       <td>
-                        <AgentLinks list={list} />
+                        <ul className="flex flex-col gap-1">
+                          {automation.examples.map((example) => (
+                            <li key={example} className="text-muted-ink">
+                              {example}
+                            </li>
+                          ))}
+                        </ul>
                       </td>
                     </tr>
                   ))}
                 </Table>
                 <Note>
-                  Connecting an agent is integration work on your systems. It is
-                  done by your own IT, or by a certified{" "}
-                  <a href="#partner-roles" className="text-signal hover:underline">
-                    integrator
-                  </a>{" "}
-                  working alongside them.
+                  An automation starts work; it never approves it. Every binding
+                  step in an automated task still stops for a named official,
+                  exactly as it would if someone had asked for it by hand.
                 </Note>
               </Section>
 
@@ -483,12 +792,13 @@ export default function GuidePage() {
                   Most work in an institution is not a one-off. Once a task has
                   run, one sentence turns it into standing work:
                 </P>
-                <Ask>Do this on the first working day of every month.</Ask>
-                <Ask>Warn me the moment a certificate is inside 14 days.</Ask>
+                <Ask>Do this for every leave request that comes in.</Ask>
+                <Ask>Start the budget report on the first working day of every month.</Ask>
                 <P>
                   The approval step is part of the task, so it is part of the
-                  standing work too. A monthly pack still goes to the responsible
-                  manager every month; it is never submitted for them.
+                  standing work too. Every leave request still goes to the line
+                  manager, and the monthly report still goes to the responsible
+                  manager; neither is ever approved or submitted for them.
                 </P>
                 <Table head={["Cadence", "What it means", "Agents"]}>
                   {cadences.map((cadence) => (
@@ -523,14 +833,15 @@ export default function GuidePage() {
               <Section id="binding-actions" title="Binding actions">
                 <P>
                   A binding action is anything that commits the institution:
-                  capturing leave, sending a letter, publishing a page, filing
-                  against a case, merging a patch. The agent prepares it; a named
+                  capturing leave on Persal, verifying or paying a claim,
+                  approving a submission, issuing a budget certificate, sending
+                  a letter, publishing a page. The agent prepares it; a named
                   official decides. That order is not configurable.
                 </P>
                 <P>
-                  When an agent is unsure &mdash; a letter whose reference points to one
-                  case and whose sender points to another &mdash; it stops and says so
-                  rather than guessing.
+                  When an agent is unsure &mdash; a receipt in someone else&rsquo;s
+                  name, a sick note that does not cover the first day &mdash; it
+                  stops and says so rather than guessing.
                 </P>
               </Section>
 
@@ -628,8 +939,8 @@ export default function GuidePage() {
 
               {/* ------------------------------------------ getting started */}
               <Section id="getting-started" eyebrow="Getting started" title="Your first task">
-                <ol className="flex flex-col gap-4">
-                  {[
+                <Steps
+                  steps={[
                     {
                       title: "Describe the work",
                       body: (
@@ -656,24 +967,14 @@ export default function GuidePage() {
                     },
                     {
                       title: "Decide who approves",
-                      body: "Name the officials who will sign off: the requesting officer, the registry clerk, the administrator, the responsible manager.",
+                      body: "Name the officials who will sign off: line managers and HR practitioners, finance officers and supervisors, the responsible manager.",
                     },
                     {
                       title: "Connect and start",
                       body: "The agent gets its own account in your systems, connected by your IT or a certified integrator. Its first task waits for its first approval.",
                     },
-                  ].map((step, i) => (
-                    <li key={step.title} className="flex gap-4">
-                      <span className="tabular mt-0.5 flex size-6 shrink-0 items-center justify-center rounded-full bg-accent-soft text-meta font-medium text-signal">
-                        {i + 1}
-                      </span>
-                      <span>
-                        <span className="text-ui font-semibold text-ink">{step.title}</span>
-                        <span className="mt-0.5 block text-ui text-muted-ink">{step.body}</span>
-                      </span>
-                    </li>
-                  ))}
-                </ol>
+                  ]}
+                />
               </Section>
             </div>
           </article>
