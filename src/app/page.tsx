@@ -215,9 +215,9 @@ export default function Home() {
                 href="/use-cases"
                 className="font-medium text-signal transition-colors duration-150 hover:underline"
               >
-                Six more from the catalogue
+                Seven more from the catalogue
               </Link>
-              : booking sick leave, patching a portal, publishing a statement, filing registry mail,
+              : booking sick leave, claiming for a trip, patching a portal, publishing a statement, filing registry mail,
               assembling a monthly pack, watching the public sites.
             </p>
           </div>

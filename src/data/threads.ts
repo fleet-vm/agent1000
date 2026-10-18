@@ -26,7 +26,8 @@ export type ThreadIcon =
   | "security"
   | "publishing"
   | "documents"
-  | "data";
+  | "data"
+  | "finance";
 
 export type Step =
   /** The person. Always the only thing on the right-hand side. */
@@ -228,6 +229,43 @@ export const catalogueThreads: Thread[] = [
       { type: "agent", text: "Captured. Your balance is 23 days, and the Z1 is on your file, signed by you, your line manager and HR. Get well soon." },
       { type: "user", text: "Do this whenever I book leave.", time: "11:05 AM" },
       { type: "auto", title: "Book leave on request", body: "On any request: check it against the determination and the balance, read the documents, route to the line manager and HR, capture on Persal once both have signed. Neither signature is ever skipped." },
+    ],
+  },
+  {
+    id: "claimsdesk",
+    slug: "claimsdesk",
+    name: "ClaimsDesk",
+    icon: "finance",
+    tools: "Travel approvals · Persal · BAS",
+    value:
+      "A travel claim built from the approved trip and checked receipt by receipt. Finance verifies it and your supervisor approves it.",
+    title: "Claim for a work trip",
+    takeaway: {
+      title: "Finance decides, with the evidence in front of it",
+      body:
+        "The meal limit, the pro-forma slip and the deadline were caught before the claim left the traveller, so it reached Finance clean. Finance still decided every receipt, and the supervisor still approved the total. The agent applied the rates; it set none of them and signed nothing.",
+    },
+    steps: [
+      { type: "user", text: "Do my travel claim for yesterday's workshop in Polokwane. Receipts attached.", time: "3:10 PM" },
+      { type: "agent", text: "I'll build it from your approved travel request, apply the rates and limits in force, and check every receipt. You sign it, Finance verifies it and your supervisor approves it before anything goes to Persal." },
+      { type: "connect", system: "Travel approvals" },
+      { type: "work", took: "22s", trace: ["Found the approved VA26A for the Polokwane workshop: 06:10 to 19:40, same day", "Under 24 hours away: no daily allowance, three meals claimable", "Read the three receipts against the expense lines", "Checked the claim against the 30-day deadline: 29 days left"] },
+      { type: "agent", text: "Two things before you sign. Lunch was R180 against a limit of R170, so I've capped it. And the dinner slip is a pro-forma invoice, not proof of payment." },
+      { type: "card", title: "Travel claim TC-2026-0418", sections: [
+        { heading: "Trip", lines: ["Polokwane workshop · 14 October · same day"] },
+        { heading: "Expenses", lines: ["Breakfast R95", "Lunch R170, capped from R180", "Dinner R150, proof of payment needed"] },
+        { heading: "Checks", lines: ["Inside the 30-day deadline", "Every line matches the approved trip"] },
+      ] },
+      { type: "user", text: "Here's the card slip for dinner.", time: "3:14 PM" },
+      { type: "agent", text: "That is proof of payment, and the amount matches. The claim comes to R415." },
+      { type: "gate", title: "Ready for your signature", body: "TC-2026-0418 · Polokwane workshop · R415.00\n\nSigning sends it to Finance to verify, then to your supervisor. Nothing is captured until both have signed." },
+      { type: "approved", text: "Signed and submitted by you · 3:16 PM" },
+      { type: "gate", title: "Needs Finance, then your supervisor", body: "Finance sees each receipt with my findings beside it and decides every one. Your supervisor approves the verified total." },
+      { type: "approved", text: "Verified by Finance, S. Khoza · 10:20 AM · Approved by T. Mabena · 1:05 PM" },
+      { type: "work", took: "8s", trace: ["Captured the claim on Persal for payment", "Generated the BAS form with every signature and the receipts appended", "Filed it against the trip"] },
+      { type: "agent", text: "Captured for payment. The BAS form is on file, signed by you, Finance and your supervisor." },
+      { type: "user", text: "Remind me whenever a trip has no claim, a week before the deadline.", time: "1:08 PM" },
+      { type: "auto", title: "Claim deadline reminder", body: "Every morning: find approved trips with no claim, and remind the traveller a week before the 30-day deadline. Every claim still goes to Finance and the supervisor." },
     ],
   },
   {

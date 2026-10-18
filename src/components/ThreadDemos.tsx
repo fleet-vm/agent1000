@@ -16,6 +16,7 @@ import {
   Shield,
   ShieldCheck,
   UserCheck,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import type { Step, Thread, ThreadIcon } from "@/data/threads";
@@ -57,6 +58,7 @@ export const ICONS: Record<ThreadIcon, LucideIcon> = {
   publishing: FileText,
   documents: FolderClosed,
   data: BarChart3,
+  finance: Wallet,
 };
 
 /* ------------------------------------------------------------------ pacing
