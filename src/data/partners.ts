@@ -144,14 +144,14 @@ export const partners: Partner[] = [
   },
   /**
    * Supplied 18 October 2026 as an email and a phone number, and certified the
-   * same day. Recorded as a reseller, since every listed partner holds a
-   * reseller agreement. Website, contact and Pretoria supplied the same day;
+   * same day, as a reseller and integrator. Website, contact and Pretoria
+   * supplied the same day;
    * focus is still to come from them.
    */
   {
     slug: "nunationdigital",
     name: "NuNationDigital",
-    roles: ["reseller"],
+    roles: ["reseller", "integrator"],
     certificate: "A1K-2026-0115",
     certifiedSince: "2026-10",
     certifiedUntil: "2028-10",
