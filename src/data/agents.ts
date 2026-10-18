@@ -13,11 +13,14 @@
  *     agent that is not yet built is written in the future tense, so the copy
  *     and the status badge cannot contradict each other.
  *
- * VulnWatch and ContentDesk are real and in production. Everything else is the
- * roadmap, labelled honestly.
+ * VulnWatch and ContentDesk are real and in production. The workflow agents --
+ * leave, claims, submissions, budget, contracts, performance -- are built and
+ * available to deploy. Everything else is the roadmap, labelled honestly.
  */
 
 export type AgentCategory =
+  | "people"
+  | "finance"
   | "security"
   | "publishing"
   | "documents"
@@ -69,6 +72,8 @@ export type Agent = {
 };
 
 export const CATEGORY_LABEL: Record<AgentCategory, string> = {
+  people: "People and HR",
+  finance: "Finance and claims",
   security: "Security and patching",
   publishing: "Publishing and content",
   documents: "Documents and records",
@@ -171,6 +176,13 @@ export const APPROVAL_LABEL: Record<AgentApproval, string> = {
 };
 
 /**
+ * The national and provincial departments: the institutions on Persal and BAS.
+ * Agents that capture to either are narrowed to these, because an entity or a
+ * municipality on its own payroll and ledger does not have that workflow.
+ */
+const DEPARTMENTS: AgentInstitution[] = ["national-department", "provincial-department"];
+
+/**
  * A shorthand for the agents whose work exists in every class of institution.
  * Most of it does: every institution has a website, a registry, a reporting
  * cycle, a bid committee and a set of regulations it answers to. `institutions`
@@ -268,6 +280,104 @@ export const agents: Agent[] = [
     connectsTo: ["Public websites", "Certificate authorities"],
     approves:
       "Standing approval to watch and report; an administrator approves any change to a site.",
+  },
+  {
+    slug: "leavedesk",
+    name: "LeaveDesk",
+    category: "people",
+    summary:
+      "Checks each leave application against the leave determination and the balance on Persal, and routes it to the line manager and HR.",
+    institutions: DEPARTMENTS,
+    channels: ["email", "whatsapp", "console"],
+    cadence: "on-request",
+    approval: "per-action",
+    status: "available",
+    connectsTo: ["Persal", "Shared mailboxes", "Document management system"],
+    approves:
+      "The line manager recommends and an HR practitioner approves; leave is captured on Persal only after both.",
+  },
+  {
+    slug: "claimsdesk",
+    name: "ClaimsDesk",
+    category: "finance",
+    summary:
+      "Builds travel and kilometre claims from the approved trip, checks every receipt against the rates in force, and pre-reviews each claim for Finance.",
+    institutions: DEPARTMENTS,
+    channels: ["email", "whatsapp", "console"],
+    cadence: "on-request",
+    approval: "per-action",
+    status: "available",
+    connectsTo: ["Persal", "BAS", "Travel approvals"],
+    approves:
+      "The claimant signs, Finance verifies and the supervisor approves before anything is captured for payment.",
+  },
+  {
+    slug: "submissiondesk",
+    name: "SubmissionDesk",
+    category: "documents",
+    summary:
+      "Routes submissions, memos and parliamentary questions through their reviewers and approvers, counts due dates in working days, and chases whoever holds them.",
+    // Submissions to a Minister, an MEC or an accounting officer; councils run
+    // their own item process.
+    institutions: [
+      "national-department",
+      "provincial-department",
+      "national-entity",
+      "provincial-entity",
+      "constitutional-institution",
+    ],
+    channels: ["email", "console"],
+    cadence: "on-request",
+    approval: "per-action",
+    status: "available",
+    connectsTo: ["Document management system", "Shared mailboxes"],
+    approves:
+      "Every reviewer and approver signs in turn; the agent routes and reminds, and never signs.",
+  },
+  {
+    slug: "budgetdesk",
+    name: "BudgetDesk",
+    category: "finance",
+    summary:
+      "Loads the monthly expenditure extract, raises the exceptions, and checks each budget confirmation request against the available balance.",
+    institutions: DEPARTMENTS,
+    channels: ["email", "console"],
+    cadence: "scheduled",
+    approval: "per-action",
+    status: "available",
+    connectsTo: ["BAS", "Expenditure extracts", "Spreadsheet templates"],
+    approves:
+      "The responsibility manager, the budget office and the state accountant each sign a certificate in turn; the responsible manager signs off the monthly report.",
+  },
+  {
+    slug: "contractdesk",
+    name: "ContractDesk",
+    category: "compliance",
+    summary:
+      "Checks a contract drafting instruction for completeness and the signatory's delegation of authority, and tracks each drafting stage against its turnaround.",
+    institutions: EVERY_INSTITUTION,
+    channels: ["email", "console"],
+    cadence: "on-request",
+    approval: "per-action",
+    status: "available",
+    connectsTo: ["Document management system", "Legal services mailbox"],
+    approves:
+      "Legal services reviews every draft, and only the delegated official signs the contract.",
+  },
+  {
+    slug: "plandesk",
+    name: "PlanDesk",
+    category: "data",
+    summary:
+      "Collects each programme's quarterly milestones and evidence against the annual performance plan, and flags what is missing before the reporting deadline.",
+    institutions: EVERY_INSTITUTION,
+    channels: ["email", "console"],
+    cadence: "scheduled",
+    approval: "standing",
+    status: "available",
+    connectsTo: ["Performance plans", "Evidence documents"],
+    approves:
+      "Programme managers confirm their own milestones; the strategy unit signs off the report.",
   },
   {
     slug: "tendercheck",

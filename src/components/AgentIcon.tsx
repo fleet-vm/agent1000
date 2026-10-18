@@ -5,12 +5,16 @@ import {
   LifeBuoy,
   Scale,
   Shield,
+  Users,
+  Wallet,
   type LucideIcon,
 } from "lucide-react";
 import type { AgentCategory } from "@/data/agents";
 
 /** One icon per category, and icons appear nowhere else except the cards. */
 const ICONS: Record<AgentCategory, LucideIcon> = {
+  people: Users,
+  finance: Wallet,
   security: Shield,
   publishing: FileText,
   documents: FolderClosed,

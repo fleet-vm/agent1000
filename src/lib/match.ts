@@ -14,6 +14,35 @@ import {
  */
 
 const KEYWORDS: Record<AgentCategory, string[]> = {
+  people: [
+    "leave",
+    "sick",
+    "maternity",
+    "hr",
+    "human resources",
+    "persal",
+    "employee",
+    "employees",
+    "staff",
+    "absence",
+  ],
+  finance: [
+    "claim",
+    "claims",
+    "s&t",
+    "subsistence",
+    "travel",
+    "trip",
+    "kilometre",
+    "mileage",
+    "receipt",
+    "receipts",
+    "budget",
+    "expenditure",
+    "spending",
+    "payment",
+    "bas",
+  ],
   security: [
     "security",
     "secure",
@@ -60,6 +89,11 @@ const KEYWORDS: Record<AgentCategory, string[]> = {
     "meeting",
     "archive",
     "scan",
+    "submission",
+    "submissions",
+    "memo",
+    "memos",
+    "parliamentary",
   ],
   data: [
     "report",
@@ -73,6 +107,9 @@ const KEYWORDS: Record<AgentCategory, string[]> = {
     "monthly",
     "quarterly",
     "figures",
+    "performance",
+    "milestone",
+    "milestones",
   ],
   servicedesk: [
     "helpdesk",
@@ -101,6 +138,9 @@ const KEYWORDS: Record<AgentCategory, string[]> = {
     "regulations",
     "audit",
     "legislation",
+    "contract",
+    "contracts",
+    "legal",
   ],
 };
 
