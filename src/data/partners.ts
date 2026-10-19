@@ -159,7 +159,7 @@ export const partners: Partner[] = [
     town: "Pretoria",
     agents: ["contentdesk", "vulnwatch"],
     website: "https://nunationdigital.co.za",
-    email: "neo@nunationza.co.za",
+    email: "simon@nunationdigital.co.za",
     contactName: "Neo Mosala",
     phone: "0813861105",
   },
