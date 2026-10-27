@@ -29,12 +29,11 @@ export default function LegalPage() {
             be added before this site goes public.
           </p>
           <p className="mt-3 text-body text-muted">
-            The Executive Assistant&rsquo;s{" "}
+            How Agent1000 handles personal information is set out in the{" "}
             <Link href="/privacy" className="text-signal underline">
               privacy notice
-            </Link>{" "}
-            covers what it can access when an owner connects their Google or
-            Microsoft account.
+            </Link>
+            .
           </p>
         </div>
       </main>
