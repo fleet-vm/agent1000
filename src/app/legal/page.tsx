@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 
@@ -24,8 +25,16 @@ export default function LegalPage() {
             Agent1000 is registered in South Africa.
           </p>
           <p className="mt-3 text-body text-muted">
-            Company registration number, registered address, terms of use and
-            privacy notice to be added before this site goes public.
+            Company registration number, registered address and terms of use to
+            be added before this site goes public.
+          </p>
+          <p className="mt-3 text-body text-muted">
+            The Executive Assistant&rsquo;s{" "}
+            <Link href="/privacy" className="text-signal underline">
+              privacy notice
+            </Link>{" "}
+            covers what it can access when an owner connects their Google or
+            Microsoft account.
           </p>
         </div>
       </main>

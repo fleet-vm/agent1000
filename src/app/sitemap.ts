@@ -100,6 +100,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       priority: 0.5,
     },
     {
+      url: url("/privacy"),
+      lastModified,
+      changeFrequency: "yearly",
+      priority: 0.1,
+    },
+    {
       url: url("/legal"),
       lastModified,
       changeFrequency: "yearly",
