@@ -134,6 +134,24 @@ const KEYWORDS: Record<AgentCategory, string[]> = {
     "contracts",
     "legal",
   ],
+  cloud: [
+    "azure",
+    "cloud",
+    "cloud cost",
+    "cloud costs",
+    "hosting",
+    "infrastructure",
+    "server",
+    "servers",
+    "virtual machine",
+    "virtual machines",
+    "vm",
+    "vms",
+    "right-size",
+    "right-sizing",
+    "licence",
+    "licensing",
+  ],
 };
 
 /**

@@ -15,7 +15,7 @@
  *     and it has to be right.
  *
  * VulnWatch and ContentDesk are real and in production. The workflow agents --
- * leave, claims, budget, contracts -- are built and available to deploy. Everything else is the roadmap, labelled honestly.
+ * leave, claims, budget, contracts -- and Azure Ops are built and available to deploy. Everything else is the roadmap, labelled honestly.
  */
 
 export type AgentCategory =
@@ -26,7 +26,8 @@ export type AgentCategory =
   | "documents"
   | "data"
   | "servicedesk"
-  | "compliance";
+  | "compliance"
+  | "cloud";
 
 export type AgentChannel = "whatsapp" | "email" | "console";
 export type AgentCadence = "scheduled" | "on-request";
@@ -80,6 +81,7 @@ export const CATEGORY_LABEL: Record<AgentCategory, string> = {
   data: "Data and reporting",
   servicedesk: "Service desk",
   compliance: "Compliance",
+  cloud: "Cloud and infrastructure",
 };
 
 export const INSTITUTION_LABEL: Record<AgentInstitution, string> = {
@@ -340,6 +342,21 @@ export const agents: Agent[] = [
     connectsTo: ["Document management system", "Legal services mailbox"],
     approves:
       "Legal services reviews every draft, and only the delegated official signs the contract.",
+  },
+  {
+    slug: "azure-ops",
+    name: "Azure Ops",
+    category: "cloud",
+    summary:
+      "Reads an institution's Azure cost and usage every morning, finds where money is being wasted, and puts each fix to a named official as an approval card.",
+    institutions: EVERY_INSTITUTION,
+    channels: ["console", "email"],
+    cadence: "scheduled",
+    approval: "per-action",
+    status: "available",
+    connectsTo: ["Microsoft Azure", "Azure Cost Management", "Azure Monitor"],
+    approves:
+      "A named official approves each resize, disk change, licence setting or shutdown schedule; nothing changes in Azure until they do, and the agent never deletes anything.",
   },
   {
     slug: "tendercheck",

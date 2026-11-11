@@ -1,5 +1,6 @@
 import {
   ChartColumn,
+  Cloud,
   FileText,
   FolderClosed,
   LifeBuoy,
@@ -21,6 +22,7 @@ const ICONS: Record<AgentCategory, LucideIcon> = {
   data: ChartColumn,
   servicedesk: LifeBuoy,
   compliance: Scale,
+  cloud: Cloud,
 };
 
 export function AgentIcon({

@@ -38,7 +38,7 @@ const SHOWN = [
   "recordsdesk",
   "reportpack",
   "sitewatch",
-  "minutedesk",
+  "azure-ops",
 ];
 
 /** The kinds of institution the site is written for, as a quiet strip. */
