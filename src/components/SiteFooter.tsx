@@ -46,7 +46,7 @@ export function SiteFooter() {
               <Logo size={19} label={false} />
             </Link>
             <p className="mt-3 max-w-[30ch] text-meta text-muted">
-              An AI workforce for South African public institutions.
+              An AI workforce for South African small and medium businesses and public institutions.
             </p>
           </div>
 

@@ -98,12 +98,12 @@ export default function Home() {
             <h1 className="anim-rise delay-1 mt-6 font-display text-display font-semibold tracking-tight text-ink">
               Agents that do the work.{" "}
               <br className="hidden sm:block" />
-              Officials who <span className="text-signal">approve it</span>.
+              Humans who <span className="text-signal">approve it</span>.
             </h1>
 
             <p className="anim-rise delay-2 mt-6 max-w-[58ch] text-lede text-muted">
-              An AI workforce for South African public institutions. Agents
-              handle the repetitive work: leave, correspondence, patching,
+              An AI workforce for South African small and medium businesses
+              and public institutions. Agents handle the repetitive work: leave, correspondence, patching,
               publishing. A named official signs off on every binding action.
             </p>
 
