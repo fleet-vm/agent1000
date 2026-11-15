@@ -7,7 +7,7 @@ import { AgentListJsonLd } from "@/components/JsonLd";
 import { OG_IMAGE } from "@/lib/site";
 
 const DESCRIPTION =
-  "Every Agent1000 agent for South African public institutions: what each one does, how it is reached, and what a person approves. Filter by institution type, from national department to local municipality.";
+  "Every Agent1000 agent for South African businesses and public institutions: what each one does, how it is reached, and what a person approves. Filter by institution type, from national department to local municipality.";
 
 export const metadata: Metadata = {
   title: "Agents",

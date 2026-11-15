@@ -30,8 +30,8 @@ export default function PrivacyPage() {
           <p className="mt-2 text-meta text-muted">Agent1000 · last updated 27 October 2026</p>
 
           <p className="mt-6 text-lede text-muted">
-            Agent1000 provides AI agents that do repetitive work for South African public
-            institutions, with a named official approving every binding action. This notice explains
+            Agent1000 provides AI agents that do repetitive work for South African small and
+            medium businesses and public institutions, with a named person approving every binding action. This notice explains
             what personal information we handle, why, where it is kept, and the choices you have.
           </p>
 
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
               <li><strong>Visitors to this website</strong>, including anyone who requests a demo or applies to resell.</li>
               <li>
                 <strong>People whose information our agents handle</strong> while working for an
-                institution: its staff, the officials who approve the agents&rsquo; work, and members
+                institution: its staff, the people who approve the agents&rsquo; work, and members
                 of the public who write to it.
               </li>
               <li>
@@ -75,7 +75,7 @@ export default function PrivacyPage() {
             <ul className="mt-3 list-disc space-y-2 pl-6">
               <li>
                 <strong>A person approves every binding action.</strong> An agent stops before
-                anything is sent, published, captured or changed, and waits for a named official.
+                anything is sent, published, captured or changed, and waits for a named person.
               </li>
               <li>
                 <strong>Every approval is logged</strong> against the person who gave it, with what

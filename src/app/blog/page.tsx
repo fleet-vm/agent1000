@@ -6,7 +6,7 @@ import { postsByDate } from "@/data/posts";
 import { OG_IMAGE } from "@/lib/site";
 
 const DESCRIPTION =
-  "Product notes, field notes and governance: what it takes to run supervised AI agents inside a South African public institution.";
+  "Product notes, field notes and governance: what it takes to run supervised AI agents inside a South African business or public institution.";
 
 export const metadata: Metadata = {
   title: "Blog",

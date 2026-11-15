@@ -6,7 +6,7 @@ import { KeyRound, ShieldCheck, UserCheck } from "lucide-react";
  * Four demo cards stacked with nothing between them is a list, and a list is
  * read by skimming the first one and scrolling past the rest. This is the beat
  * in the middle -- and it is deliberately the objection beat, not another
- * feature beat, because the reader here is an official who will have to defend
+ * feature beat, because the reader here is the person who will have to defend
  * the decision to let software touch a payroll system.
  */
 const POINTS = [
@@ -18,12 +18,12 @@ const POINTS = [
   {
     icon: ShieldCheck,
     title: "It stops before it binds",
-    body: "Capturing leave, sending a letter, publishing a page. The agent prepares; a named official decides. That order is not configurable.",
+    body: "Capturing leave, sending a letter, publishing a page. The agent prepares; a named person decides. That order is not configurable.",
   },
   {
     icon: UserCheck,
     title: "The record names a person",
-    body: "Every approval is logged against the official who gave it, not the agent. When someone asks who authorised this, there is an answer.",
+    body: "Every approval is logged against the person who gave it, not the agent. When someone asks who authorised this, there is an answer.",
   },
 ];
 
@@ -35,7 +35,7 @@ export function ControlBand() {
         id="control-heading"
         className="mt-2 max-w-[24ch] font-display text-head font-semibold tracking-tight text-ink"
       >
-        What an official is actually agreeing to
+        What you are actually agreeing to
       </h2>
       <p className="mt-3 max-w-[52ch] text-lede text-muted">
         The part that has to survive an audit, not a demo.

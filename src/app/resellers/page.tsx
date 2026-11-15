@@ -6,7 +6,7 @@ import { ResellerForm } from "@/components/resellers/ResellerForm";
 import { OG_IMAGE } from "@/lib/site";
 
 const DESCRIPTION =
-  "Apply to resell Agent1000 agents to South African public institutions. Every applicant is vetted for company registration, tax compliance and CSD listing before appointment.";
+  "Apply to resell Agent1000 agents to South African businesses and public institutions. Every applicant is vetted for company registration, tax compliance and CSD listing before appointment.";
 
 export const metadata: Metadata = {
   title: "Resellers",

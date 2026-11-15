@@ -49,7 +49,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     siteName: SITE_NAME,
-    // en_ZA: the audience is South African public institutions, and the copy
+    // en_ZA: the audience is South African businesses and public institutions, and the copy
     // uses SA terms of art throughout -- PFMA schedules, CIPC, SETAs.
     locale: "en_ZA",
     url: "/",

@@ -348,7 +348,7 @@ export const agents: Agent[] = [
     name: "Azure Ops",
     category: "cloud",
     summary:
-      "Reads an institution's Azure cost and usage every morning, finds where money is being wasted, and puts each fix to a named official as an approval card.",
+      "Reads an institution's Azure cost and usage every morning, finds where money is being wasted, and puts each fix to a named person as an approval card.",
     institutions: EVERY_INSTITUTION,
     channels: ["console", "email"],
     cadence: "scheduled",
@@ -356,7 +356,7 @@ export const agents: Agent[] = [
     status: "available",
     connectsTo: ["Microsoft Azure", "Azure Cost Management", "Azure Monitor"],
     approves:
-      "A named official approves each resize, disk change, licence setting or shutdown schedule; nothing changes in Azure until they do, and the agent never deletes anything.",
+      "A named person approves each resize, disk change, licence setting or shutdown schedule; nothing changes in Azure until they do, and the agent never deletes anything.",
   },
   {
     slug: "tendercheck",
