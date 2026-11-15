@@ -52,7 +52,7 @@ const TABS: { id: StepId; title: string; body: string }[] = [
   {
     id: "approve",
     title: "Approve",
-    body: "Every binding action stops and waits for a named person. Nothing is captured, sent, published or changed on its own.",
+    body: "Every binding action stops and waits for a human. Nothing is captured, sent, published or changed on its own.",
   },
   {
     id: "repeat",

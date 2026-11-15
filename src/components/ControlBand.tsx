@@ -18,7 +18,7 @@ const POINTS = [
   {
     icon: ShieldCheck,
     title: "It stops before it binds",
-    body: "Capturing leave, sending a letter, publishing a page. The agent prepares; a named person decides. That order is not configurable.",
+    body: "Capturing leave, sending a letter, publishing a page. The agent prepares; a human decides. That order is not configurable.",
   },
   {
     icon: UserCheck,

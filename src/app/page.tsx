@@ -104,7 +104,7 @@ export default function Home() {
             <p className="anim-rise delay-2 mt-6 max-w-[58ch] text-lede text-muted">
               An AI workforce for South African small and medium businesses
               and public institutions. Agents handle the repetitive work: leave, correspondence, patching,
-              publishing. A named person signs off on every binding action.
+              publishing. A human signs off on every binding action.
             </p>
 
             <div className="anim-rise delay-3 mt-8 flex flex-wrap items-center justify-center gap-3">
@@ -117,7 +117,7 @@ export default function Home() {
             </div>
 
             <p className="anim-rise delay-4 mt-5 text-meta text-muted">
-              Built for PFMA and MFMA institutions · Every approval logged against a named person
+              Built for PFMA and MFMA institutions · Every approval logged against a human
             </p>
           </div>
 
@@ -192,8 +192,8 @@ export default function Home() {
             </h2>
             <p className="mt-3 max-w-[52ch] text-lede text-muted">
               Every thread below starts with somebody asking for something in
-              plain English. Watch where each one stops. That pause is a named
-              person, and it is the whole product.
+              plain English. Watch where each one stops. That pause is a
+              human, and it is the whole product.
             </p>
 
             <div className="mt-10">

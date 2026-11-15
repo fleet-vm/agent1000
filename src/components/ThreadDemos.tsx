@@ -37,8 +37,8 @@ import type { Step, Thread, ThreadIcon } from "@/data/threads";
  * COLOUR, and it is a rule, not a preference: inside a thread, colour marks
  * the human and nothing else.
  *
- *   amber (pilot)  work has stopped and is waiting for a named person
- *   green (live)   a named person decided, and it is now done
+ *   amber (pilot)  work has stopped and is waiting for a human
+ *   green (live)   a human decided, and it is now done
  *
  * Everything else -- the person's own bubble, the agent's prose, the systems
  * it connected to, the traces, the briefs, the automations -- is ink and grey.

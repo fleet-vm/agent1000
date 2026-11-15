@@ -101,7 +101,7 @@ const CHANNEL_NOTE: Record<AgentChannel, string> = {
 
 const APPROVAL_NOTE: Record<AgentApproval, string> = {
   "per-action":
-    "Every piece of work stops for a named person before it takes effect: each page, each filing, each reply.",
+    "Every piece of work stops for a human before it takes effect: each page, each filing, each reply.",
   standing:
     "A responsible official approves the job once \u2014 scan and report, watch and report, assemble the pack. Anything that changes a system still waits for a person.",
 };
