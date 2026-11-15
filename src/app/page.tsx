@@ -96,9 +96,9 @@ export default function Home() {
             </Link>
 
             <h1 className="anim-rise delay-1 mt-6 font-display text-display font-semibold tracking-tight text-ink">
-              Agents that do the work.{" "}
+              AI agents that work like employees,{" "}
               <br className="hidden sm:block" />
-              Humans who <span className="text-signal">approve it</span>.
+              with humans who <span className="text-signal">make the decisions</span>.
             </h1>
 
             <p className="anim-rise delay-2 mt-6 max-w-[58ch] text-lede text-muted">
