@@ -116,9 +116,6 @@ export default function Home() {
               </ButtonLink>
             </div>
 
-            <p className="anim-rise delay-4 mt-5 text-meta text-muted">
-              Built for PFMA and MFMA institutions · Every approval logged against a human
-            </p>
           </div>
 
           {/* The one place on the site where anything is typed. */}
